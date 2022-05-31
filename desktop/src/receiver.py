@@ -23,6 +23,11 @@ class Receiver():
 
         i = mail_ids[-1]
         status, data = self.mail.fetch(i, '(RFC822)')
+
+        mail_from = ''
+        mail_subject = ''
+        mail_content = ''
+
         for response_part in data:
             if isinstance(response_part, tuple):
                 message = email.message_from_bytes(response_part[1])
@@ -35,10 +40,13 @@ class Receiver():
                             mail_content += part.get_payload()
                 else:
                     mail_content = message.get_payload()
-                print(f'From: {mail_from}')
-                print(f'Subject: {mail_subject}')
-                print(f'Content: {mail_content}')
+        print(f'From: {mail_from}')
+        print(f'Subject: {mail_subject}')
+        print(f'Content: {mail_content}')
+
+        # return values
+        return mail_from, mail_subject, mail_content
 
 
-R = Receiver()
-R.get_recent_mail()
+# R = Receiver()
+# R.get_recent_mail()

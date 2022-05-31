@@ -27,6 +27,6 @@ class Sender():
         self.server.quit()
 
 
-S = Sender()
-S.send_mail(['receiverimap002@gmail.com'], 'Bye Bye Bye', 'Bye Bye Bye World')
-S.quit()
+# S = Sender()
+# S.send_mail(['receiverimap002@gmail.com'], 'Bye Bye Bye', 'Bye Bye Bye World')
+# S.quit()
