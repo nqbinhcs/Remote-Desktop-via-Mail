@@ -9,12 +9,12 @@ class Process():
         if code == 'view':
             return self.process_view()
         elif code == 'kill':
-            return self.process_kill()
+            return self.process_kill(2304)
         else:
             return "<send error message: Code incorrect>"
 
     def process_view(self):
-        return  os.popen('powershell "gps |  select name, id, {$_.Threads.Count}').read()
+        return os.popen('powershell "gps |  select name, id, {$_.Threads.Count}').read()
 
-    def process_kill(self):
-        return "kill"
+    def process_kill(self, process_ID):
+        os.kill(process_ID, 9)

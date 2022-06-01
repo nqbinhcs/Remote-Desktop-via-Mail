@@ -1,4 +1,6 @@
 import os
+import shutil
+from sys import gettrace
 
 class FileSystem:
 
@@ -26,6 +28,16 @@ class FileSystem:
 
         # self.show()
 
+    def run(self, code):
+        if code == 'view':
+            return self.getTree()
+        elif code == 'copy':
+            return self.copy(r"C:/Users/nguye/Downloads/PHONGTHI_HK2_2122_LINH TRUNG_NVC.xls", r"C:/Users/nguye/Desktop/PHONGTHI_HK2_2122_LINH TRUNG_NVC.xls")
+        elif code == 'download':
+            return self.download()
+        else:
+            return 'wrong code'
+
     def split(self, path):
         return path.split('\\')
 
@@ -36,14 +48,23 @@ class FileSystem:
 
     def getTree(self):
         tree = []
-        
-        for root, dirs, files in os.walk(self.components[0]+'\\'):
+
+        path = ''
+        for i in self.components[:-2]:
+            path += i + '\\'
+
+        path = path[:-1]
+
+
+        for root, dirs, files in os.walk(path):
+        # for root, dirs, files in os.walk(self.components[0]+'\\'):
             component = self.split(root)
             stt = len(component)-1
             tree.append([stt, component[-1]])
             for file in files:
                 tree.append([stt+1, file])
 
+        # self.show(tree)
         return tree
 
     def show(self, tree):
@@ -55,7 +76,11 @@ class FileSystem:
                 print('  ', end='')
             print(symbols[(dir[0]-start) % l] + ' ' + dir[1])
 
-    def copy(self, path):
-        return 'a'
+    def copy(self, src_path, dst_path):
+        shutil.copyfile(src_path, dst_path)
+        return True
+
+    def download(self):
+        print('download - <just attach the file>')
 
 FileSystem()
