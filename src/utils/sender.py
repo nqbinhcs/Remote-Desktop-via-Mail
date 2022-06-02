@@ -5,14 +5,23 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
+# from utils.receiver import SMTP_SSL_PORT
+# from utils.receiver import DEFAULT_PASSWORD, DEFAULT_USERNAME
+
 
 # connect with Google's servers
-SMTP_SSL_HOST = 'smtp.gmail.com'
+# SMTP_SSL_HOST = 'smtp.gmail.com'
+# SMTP_SSL_PORT = 465
+SMTP_SSL_HOST = 'smtp-mail.outlook.com'
 SMTP_SSL_PORT = 465
 
 # use username or email to log in
-DEFAULT_USERNAME = 'senderSMTP001@gmail.com'
-DEFAULT_PASSWORD = 'sender1234'
+# DEFAULT_USERNAME = 'senderSMTP001@gmail.com'
+# DEFAULT_PASSWORD = 'sender1234'
+
+DEFAULT_USERNAME = 'senderSMTP001@outlook.com'
+DEFAULT_PASSWORD = 'ddsunoqprnvjtopc'
+
 
 # TODO
 # Functions -> create format html files to response for each functions => sender.py
@@ -46,6 +55,6 @@ class Sender():
 
 S = Sender()
 S.send_mail(['receiverimap002@gmail.com'], 'RDM-LIST PROCESS', '')
-S.send_mail(['receiverimap002@gmail.com'], 'RDM-LIST APP', '')
-S.send_mail(['receiverimap002@gmail.com'], 'RDM-KEYLOGGER', '20')
+# S.send_mail(['receiverimap002@gmail.com'], 'RDM-LIST APP', '')
+# S.send_mail(['receiverimap002@gmail.com'], 'RDM-KEYLOGGER', '20')
 S.quit()

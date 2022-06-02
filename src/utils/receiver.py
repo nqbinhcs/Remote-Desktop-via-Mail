@@ -19,7 +19,8 @@ IMAP_SSL_HOST = 'imap.gmail.com'
 
 # use username or email to log in
 DEFAULT_USERNAME = 'receiverimap002@gmail.com'
-DEFAULT_PASSWORD = 'receiver1234'  # encrypted password using JSON
+# DEFAULT_PASSWORD = 'receiver1234'  # encrypted password using JSON
+DEFAULT_PASSWORD = 'orkphlqjqbsnrvin'  # encrypted password using JSON
 
 # TRUSTED SENDERS
 TRUSTED_SENDERS = ['sendersmtp001@gmail.com']  # encrypted using JSON
@@ -58,16 +59,6 @@ class Receiver():
         # we choose the inbox but you can select others
         self.mail.select('inbox')
 
-    # def check_mails(self):
-    #     self.mail.select(readonly=False)
-    #     _, data = self.mail.search(None, '(UNANSWERED)')
-    #     # _, data = self.mail.search(None, 'All')
-    #     self.mail.close()
-    #     for mail_number in data[0].split():
-    #         if self.is_valid_mail(mail_number):
-    #             self.reply(mail_number)
-    #             break
-
     def get_unanswered_mails(self):
         self.mail.select(readonly=False)
         # _, data = self.mail.search(None, 'ALL')
@@ -81,7 +72,7 @@ class Receiver():
         self.mail.close()
         mail = email.message_from_bytes(data[0][1])
 
-        mail_from = mail['From']
+        mail_from = mail['From'].split()[-1][1:-1]
         mail_subject = mail['Subject']
         if mail.is_multipart():
             mail_content = ''
@@ -91,7 +82,9 @@ class Receiver():
         else:
             mail_content = mail.get_payload()
 
-        print(mail_from, mail_subject, mail_content)
+        print(f'From: {mail_from}')
+        print(f'Subject: {mail_subject}')
+        print(f'Content: {mail_content}')
 
         if mail_from not in TRUSTED_SENDERS:
             return None, None
@@ -99,6 +92,8 @@ class Receiver():
         subject, command_subject = mail_subject.split('-')
         if subject != REGCONIZE_SUBJECT or command_subject not in COMMANDS:
             return None, None
+
+        print('-> This mail is valid')
 
         return command_subject, mail_content
 
@@ -126,8 +121,10 @@ class Receiver():
             TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
         body_html = open(template)
         body_html = body_html.read().format(content)
+        # body_html = body_html.read()
 
         # attach
+        # mail.attach(MIMEText(dedent(content), 'plain'))
         mail.attach(MIMEText(body_html, 'html'))
 
         # attach files
