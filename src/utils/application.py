@@ -1,6 +1,5 @@
 import os
 
-
 class Application:
     def __init__(self):
         pass
@@ -13,11 +12,11 @@ class Application:
 
     def view(self):
         return os.popen('powershell "gps | where {$_.MainWindowTitle } | select name, id, {$_.Threads.Count}').read()
-
+    
     def kill(self, id):
         print('before:')
-        print(self.view())
+        print(self.view()) 
         os.kill(id, 9)
         print('after:')
-        print(self.view())
+        print(self.view()) 
         return True

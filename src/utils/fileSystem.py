@@ -2,7 +2,6 @@ import os
 import shutil
 from sys import gettrace
 
-
 class FileSystem:
 
     '''
@@ -53,8 +52,9 @@ class FileSystem:
 
         path = path[:-1]
 
+
         for root, dirs, files in os.walk(path):
-            # for root, dirs, files in os.walk(self.components[0]+'\\'):
+        # for root, dirs, files in os.walk(self.components[0]+'\\'):
             component = self.split(root)
             stt = len(component)-1
             tree.append([stt, component[-1]])
@@ -79,6 +79,5 @@ class FileSystem:
 
     def download(self):
         print('download - <just attach the file>')
-
 
 FileSystem()
