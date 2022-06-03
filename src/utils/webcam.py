@@ -1,15 +1,9 @@
-import cv2  # pip install opencv-python
-import numpy as np
-from PIL import ImageGrab
-from PIL import Image, ImageTk
+import cv2 
 import os
 
 
 class Webcam():
     def __init__(self):
-        self.flag = False
-        self.width = 0
-        self.height = 0
         pass
 
     def run(self, code, time=10):
@@ -17,50 +11,46 @@ class Webcam():
             return self.screenshot()
         elif code == "video":
             return self.record(time)
+         
+        return False
 
     def screenshot(self):
-        cam = cv2.VideoCapture(0)
-        res, img = cam.read()
+        try:
+            cam = cv2.VideoCapture(0)
+            _, img = cam.read()
 
-        path = os.path.join('.temp', 'webcam.png')
+            path = os.path.join('.temp', 'webcam.png')
 
-        cv2.imwrite(path, img)
+            cv2.imwrite(path, img)
 
-        # Get width & height of image capturing from webcam
-        if self.flag == False:
-            img = Image.open(path)
-            self.width = img.width
-            self.height = img.height
-            self.flag = True
+            cam.release()
 
-        cam.release()
+            return True
+        
+        except OSError:
+            return False
 
     def record(self, time):
-        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        fps = 20
-        cam = cv2.VideoCapture(0)
+        try:
+            fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+            fps = 20
+            cam = cv2.VideoCapture(0)
 
-        path = os.path.join('.temp', 'webcam-record.avi')
+            path = os.path.join('.temp', 'webcam-record.avi')
 
-        if self.flag:
-            out = cv2.VideoWriter(path, fourcc, fps, (self.width, self.height))
+            _, img = cam.read()
+            height, width, _ = img.shape()
+            out = cv2.VideoWriter(path, fourcc, fps, (width, height))
 
-        for i in range(time*fps):
-            res, img = cam.read()
+            for i in range(time*fps):
+                _, img = cam.read()
+                out.write(img)
+                cv2.waitKey(1)
 
-            if self.flag == False:
-                cv2.imwrite("webcam.png", img)
-                image = Image.open("webcam.png")
-                self.width = image.width
-                self.height = image.height
-                self.flag = True
-                out = cv2.VideoWriter(
-                    "output.avi", fourcc, fps, (self.width, self.height))
-
-                os.remove("webcam.png")
-
-            out.write(img)
-            cv2.waitKey(1)
-
-        cam.release()
-        out.release()
+            cam.release()
+            out.release()
+        
+            return True
+        
+        except OSError:
+            return False

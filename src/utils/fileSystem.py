@@ -3,81 +3,41 @@ import shutil
 from sys import gettrace
 
 class FileSystem:
-
-    '''
-    Return 2d array :
-        [<File Number>, <File Name>]
-        Ex:
-            [1, "Github"]
-                [2, "Remote-Desktop-Via-Mail]
-                [2, "Contacts-App]
-                    [3, "data"]
-                    ....
-                     
-    '''
-
     def __init__(self):
-        # get all
-        self.path = ''
-
-        self.getPath()
-
-        self.components = self.split(self.path)
-
-        # self.show()
-
-    def run(self, code):
+        pass
+ 
+    def run(self, code, src_path = r"", dst_folder=r""):
         if code == 'view':
             return self.getTree()
         elif code == 'copy':
-            return self.copy(r"C:/Users/nguye/Downloads/PHONGTHI_HK2_2122_LINH TRUNG_NVC.xls", r"C:/Users/nguye/Desktop/PHONGTHI_HK2_2122_LINH TRUNG_NVC.xls")
+            return self.copy(src_path, dst_folder)
         elif code == 'download':
             return self.download()
-        else:
-            return 'wrong code'
-
-    def split(self, path):
-        return path.split('\\')
-
-    def getPath(self):
-        self.path = os.getcwd()
-        # return self.system
+        
+        return False
 
     def getTree(self):
+        self.components = os.getcwd().split('\\')
+        
         tree = []
 
-        path = ''
-        for i in self.components[:-2]:
-            path += i + '\\'
-
-        path = path[:-1]
-
-
-        for root, dirs, files in os.walk(path):
-        # for root, dirs, files in os.walk(self.components[0]+'\\'):
-            component = self.split(root)
+        for root, _, files in os.walk(self.components[0]+'\\'):
+            component = root.split('\\')
             stt = len(component)-1
             tree.append([stt, component[-1]])
             for file in files:
                 tree.append([stt+1, file])
 
-        # self.show(tree)
         return tree
 
-    def show(self, tree):
-        symbols = ['-', '+', '*', '~', '@', '#', '$']
-        l = len(symbols)
-        start = tree[0][0]
-        for dir in tree:
-            for i in range(dir[0]-start):
-                print('  ', end='')
-            print(symbols[(dir[0]-start) % l] + ' ' + dir[1])
-
-    def copy(self, src_path, dst_path):
-        shutil.copyfile(src_path, dst_path)
+    def copy(self, src_path, dst_folder):
+        try:
+            dst_path = os.path.join(dst_folder, src_path.split('\\')[-1])
+            print(dst_path)
+            shutil.copyfile(src_path, dst_path)
+        except OSError:
+            return False
         return True
 
     def download(self):
-        print('download - <just attach the file>')
-
-FileSystem()
+        print('attach file')

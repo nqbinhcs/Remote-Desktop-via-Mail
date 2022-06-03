@@ -4,19 +4,18 @@ class Application:
     def __init__(self):
         pass
 
-    def run(self, code):
+    def run(self, code, id=0):
         if code == 'view':
             return self.view()
         elif code == 'kill':
-            return self.kill(26944)
-
+            return self.kill(id)
+ 
     def view(self):
         return os.popen('powershell "gps | where {$_.MainWindowTitle } | select name, id, {$_.Threads.Count}').read()
     
     def kill(self, id):
-        print('before:')
-        print(self.view()) 
-        os.kill(id, 9)
-        print('after:')
-        print(self.view()) 
+        try:
+            os.kill(id, 9)
+        except OSError:
+            return False
         return True
