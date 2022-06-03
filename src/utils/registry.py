@@ -10,7 +10,7 @@ Content:
     <["wirte", "get", "create", "set", "delete-value", "delete-key"]>
     <parameters>
 '''
-
+ 
 # Type
 '''
 1. Write registry file
