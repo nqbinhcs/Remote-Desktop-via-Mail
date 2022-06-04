@@ -13,7 +13,7 @@ class Webcam():
         elif code == "video":
             return self.record(time)
          
-        return False
+        return ''
 
     def screenshot(self):
         try:
@@ -30,10 +30,10 @@ class Webcam():
 
             cam.release()
 
-            return True, filename
+            return filename
         
         except OSError:
-            return False
+            return ''
 
     def record(self, time):
         try:
@@ -59,7 +59,7 @@ class Webcam():
             cam.release()
             out.release()
         
-            return True, filename
+            return filename
         
         except OSError:
-            return False
+            return ''

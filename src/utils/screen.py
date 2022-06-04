@@ -14,7 +14,7 @@ class Screen():
             return self.screenshot()
         elif code == "video":
             return self.record(time)
-        return False
+        return ''
 
     def screenshot(self):
         try:
@@ -26,9 +26,9 @@ class Screen():
             
             path = os.path.join('.temp', filename)
             img.save(path)
-            return True, filename
+            return filename
         except OSError:
-            return False
+            return ''
 
     def record(self, time):
         try:
@@ -57,7 +57,7 @@ class Screen():
 
             out.release()
 
-            return True, filename
+            return filename
             
         except OSError:
-            return False
+            return ''
