@@ -5,9 +5,8 @@ import os
 '''
 Email:
 
-Subject: RDM-REGISTRY
+Subject: RDM-["WRITE", "GET", "CREATE", "SET", "DELETE VALUE", "DELETE KEY"] REGISTRY
 Content:
-    <["wirte", "get", "create", "set", "delete-value", "delete-key"]>
     <parameters>
 '''
  
@@ -92,12 +91,13 @@ class Registry:
     def write_file_registry(self, parameters=None):
         if parameters:
             # Case 1: Create fileReg.reg in .temp folder
-            fi = open(os.path.join(".temp", "fileReg.reg"), "wb")
+            fi = open(os.path.join(".temp", "fileReg.reg"), "w")
             fi.write(parameters)
             fi.close()
 
         try:
-            os.popen("regedit.exe /s fileReg.reg")
+            cmd = os.path.join(os.getcwd(), ".temp", "fileReg.reg")
+            os.popen("regedit.exe /s " + cmd)
         except OSError:
             os.remove(os.path.join(".temp", "fileReg.reg"))
             return False
