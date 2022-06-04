@@ -1,5 +1,6 @@
 import cv2 
 import os
+import datetime
 
 
 class Webcam():
@@ -19,13 +20,17 @@ class Webcam():
             cam = cv2.VideoCapture(0)
             _, img = cam.read()
 
-            path = os.path.join('.temp', 'webcam.png')
+            # create file-name according yy-m(m)-d(d)-h(h)-m(m)-s(s).png
+            now = datetime.datetime.now()
+            filename = now.year[:-2:-1] + '-' + now.month + '-' + now.day + '-' + now.hour + '-' + now.minute + '-' + now.second + '.png'
+            
+            path = os.path.join('.temp', filename)
 
             cv2.imwrite(path, img)
 
             cam.release()
 
-            return True
+            return True, filename
         
         except OSError:
             return False
@@ -36,10 +41,14 @@ class Webcam():
             fps = 20
             cam = cv2.VideoCapture(0)
 
-            path = os.path.join('.temp', 'webcam-record.avi')
+            # create file-name according yy-m(m)-d(d)-h(h)-m(m)-s(s).png
+            now = datetime.datetime.now()
+            filename = now.year[:-2:-1] + '-' + now.month + '-' + now.day + '-' + now.hour + '-' + now.minute + '-' + now.second + '.avi'
+            
+            path = os.path.join('.temp', filename)
 
             _, img = cam.read()
-            height, width, _ = img.shape()
+            height, width, _ = img.shape
             out = cv2.VideoWriter(path, fourcc, fps, (width, height))
 
             for i in range(time*fps):
@@ -50,7 +59,7 @@ class Webcam():
             cam.release()
             out.release()
         
-            return True
+            return True, filename
         
         except OSError:
             return False

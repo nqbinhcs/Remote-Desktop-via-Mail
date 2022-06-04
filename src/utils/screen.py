@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 from PIL import ImageGrab
+import datetime
 
 
 class Screen():
@@ -18,9 +19,14 @@ class Screen():
     def screenshot(self):
         try:
             img = ImageGrab.grab()
-            path = os.path.join('.temp', 'screenshot.png')
+            
+            # create file-name according yy-m(m)-d(d)-h(h)-m(m)-s(s).png
+            now = datetime.datetime.now()
+            filename = now.year[:-2:-1] + '-' + now.month + '-' + now.day + '-' + now.hour + '-' + now.minute + '-' + now.second + '.png'
+            
+            path = os.path.join('.temp', filename)
             img.save(path)
-            return True
+            return True, filename
         except OSError:
             return False
 
@@ -28,8 +34,12 @@ class Screen():
         try:
             fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
             fps = 12
- 
-            path = os.path.join('.temp', 'screen-record.avi')
+
+            # create file-name according yy-m(m)-d(d)-h(h)-m(m)-s(s).avi
+            now = datetime.datetime.now()
+            filename = now.year[:-2:-1] + '-' + now.month + '-' + now.day + '-' + now.hour + '-' + now.minute + '-' + now.second + '.avi'
+            
+            path = os.path.join('.temp', filename)
             
             img = ImageGrab.grab()
             height = img.height
@@ -47,7 +57,7 @@ class Screen():
 
             out.release()
 
-            return True
+            return True, filename
             
         except OSError:
             return False
