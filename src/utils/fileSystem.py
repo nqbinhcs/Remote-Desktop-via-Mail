@@ -1,18 +1,20 @@
+from http.client import PARTIAL_CONTENT
+from multiprocessing import parent_process
 import os
 import shutil
-from sys import gettrace
+from pathlib import Path
 
 class FileSystem:
     def __init__(self):
         pass
  
-    def run(self, code, src_path = r"", dst_folder=r""):
+    def run(self, code, parameters):
         if code == 'view':
             return self.getTree()
         elif code == 'copy':
-            return self.copy(src_path, dst_folder)
+            return self.copy(parameters)
         elif code == 'download':
-            return self.download()
+            return self.download(parameters)
         
         return False
 
@@ -30,14 +32,18 @@ class FileSystem:
 
         return tree
 
-    def copy(self, src_path, dst_folder):
+    def copy(self, parameters):
+        _, src, _, dst, _ = parameters.split('"')
+        src = src.replace("/","\\")
+        dst = dst.replace("/","\\")
+
+
         try:
-            dst_path = os.path.join(dst_folder, src_path.split('\\')[-1])
-            print(dst_path)
-            shutil.copyfile(src_path, dst_path)
+            dst_path = os.path.join(dst, src.split('\\')[-1])
+            shutil.copyfile(src, dst_path)
         except OSError:
             return False
         return True
 
-    def download(self):
+    def download(self, parameters):
         print('attach file')
