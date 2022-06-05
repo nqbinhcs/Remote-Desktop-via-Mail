@@ -38,7 +38,7 @@ TEMPLATE_PATH = os.path.join('src', 'templates')
 TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kill-process.html',
                        'LIST APP': 'list-app.html', 'KILL APP': 'kil-app.html', 'CAPTURE SCREEN': 'capture-screen.html',
                        'RECORD SCREEN': 'record-screen.html', 'SHOT WEBCAM': 'shot-webcam.html', 'RECORD WEBCAM': 'record-webcam.html',
-                       'FILE SYSTEM': 'file-system.html', 'REGISTRY': 'registry.html', 'KEYLOGGER': 'keylogger.html',
+                       'VIEW FILE SYSTEM': 'file-system.html', 'REGISTRY': 'registry.html', 'KEYLOGGER': 'keylogger.html',
                        'SHUTDOWN': 'shutdown.html', 'RESTART': 'restart.html'}
 
 
@@ -122,8 +122,53 @@ class Receiver():
         template = os.path.join(
             TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
         body_html = open(template)
-        body_html = body_html.read().format(content)
-        # body_html = body_html.read()
+        body_html = body_html.read()
+        if command == 'LIST PROCESS' or command == 'LIST APP':
+            content_str = str(content)
+            data_str = content_str.replace("\n", " ")
+            data = data_str.split(" ")
+            size = len(data)
+            print(size)
+            i = 0
+            while i < size:
+                if (i > size):
+                    print(data)
+                    break
+                if data[i] == '':
+                    del data[i]
+                    i = i - 1
+                    size = len(data)
+                    continue
+                i += 1
+
+            if command == 'LIST PROCESS':
+                for i in range(len(data) - 1):
+                    if data[i] == "Memory" and data[i + 1] == "Compression":
+                        data[i] += " " + data[i + 1]
+                        del data[i + 1]
+                        break
+
+            #  loop over our arrays and create our html string
+            outputHTML = "<table>"
+            for i in range(len(data)//3):
+                if i == 1: continue
+                if i == 0:
+                    outputHTML += "<tr class = \"header_table\">"
+                else:
+                    outputHTML += "<tr>"
+                for j in range(3):
+                    if j == 1:
+                        outputHTML += "<td style=\"width:30%\">"
+                    else:
+                        outputHTML += "<td>"
+                    outputHTML += data[3 * i + j] + "</td>"
+                outputHTML += "</tr>"
+            outputHTML += "</table>"
+            body_html = body_html.format(outputHTML)
+        else:
+            body_html = body_html.format(content) 
+        # print(body_html)
+
 
         # attach
         # mail.attach(MIMEText(dedent(content), 'plain'))
