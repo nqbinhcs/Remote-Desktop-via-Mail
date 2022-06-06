@@ -43,7 +43,7 @@ class Webcam():
 
             # create file-name according yy-m(m)-d(d)-h(h)-m(m)-s(s).png
             now = datetime.datetime.now()
-            filename = str(now.year%100) + '-' + str(now.month) + '-' + str(now.day) + '-' + str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '.png'
+            filename = str(now.year%100) + '-' + str(now.month) + '-' + str(now.day) + '-' + str(now.hour) + '-' + str(now.minute) + '-' + str(now.second) + '.avi'
             
             path = os.path.join('.temp', filename)
 

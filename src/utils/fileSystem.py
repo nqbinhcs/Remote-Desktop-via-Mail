@@ -18,18 +18,26 @@ class FileSystem:
         
         return False
 
-    def getTree(self):
-        self.components = os.getcwd().split('\\')
-        
-        tree = []
+    def getTree(self, path=None):
+        if path == None:
+            path = os.getcwd().split('\\')[0]
+        else:
+            path = path[:-2]
+        tree = os.listdir(path+'\\')
+        tree.append(path)
 
-        for root, _, files in os.walk(self.components[0]+'\\'):
-            component = root.split('\\')
-            stt = len(component)-1
-            tree.append([stt, component[-1]])
-            for file in files:
-                tree.append([stt+1, file])
-
+        i = 0
+        j = len(tree) - 2
+        while i < len(tree) - 1:
+            if os.path.isfile(os.path.join(path, tree[i])):
+                tmp = tree[i]
+                tree[i] = tree[j]
+                tree[j] = tmp
+                j -= 1
+                i -= 1
+            i += 1
+            if i == j: break
+            
         return tree
 
     def copy(self, parameters):

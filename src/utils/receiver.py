@@ -123,17 +123,14 @@ class Receiver():
             TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
         body_html = open(template)
         body_html = body_html.read()
+        
         if command == 'LIST PROCESS' or command == 'LIST APP':
             content_str = str(content)
             data_str = content_str.replace("\n", " ")
             data = data_str.split(" ")
             size = len(data)
-            print(size)
             i = 0
             while i < size:
-                if (i > size):
-                    print(data)
-                    break
                 if data[i] == '':
                     del data[i]
                     i = i - 1
@@ -164,6 +161,18 @@ class Receiver():
                     outputHTML += data[3 * i + j] + "</td>"
                 outputHTML += "</tr>"
             outputHTML += "</table>"
+            body_html = body_html.format(outputHTML)
+        elif command == 'VIEW FILE SYSTEM':
+            content_list = list(content)
+            root = content_list[-1]
+            outputHTML = "<ul><li class=\"root_dir\">{}<ul>".format(root)
+            for i in range(len(content_list) - 1):
+                if os.path.isfile(os.path.join(root, content_list[i])):
+                    outputHTML += "<li class=\"child_dir_2\">" + content_list[i] + "</li>"
+                else:
+                    outputHTML += "<li class=\"child_dir_1\">" + content_list[i] + "</li>"
+
+            outputHTML += "</ul></li></ul>"
             body_html = body_html.format(outputHTML)
         else:
             body_html = body_html.format(content) 
