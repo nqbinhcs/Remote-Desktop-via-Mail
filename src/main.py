@@ -12,6 +12,11 @@ from utils.receiver import Receiver
 
 # Process
 def list_process():
+    """List all process of desktop
+
+    Returns:
+        _type_ -- _description_
+    """
     doit = Process()
     processes = doit.run(code='view')
     return processes
@@ -82,7 +87,7 @@ def copy_fileSystem(parameters):
     return succeed_status
 
 
-def download_fileSystem(parameters):                                                        #not done
+def download_fileSystem(parameters):  # not done
     doit = FileSystem()
     succeed_status = doit.run('download', parameters)
     return succeed_status
@@ -185,28 +190,28 @@ def execute(command, parameter=None):  # parameter
         content = download_fileSystem(parameter)
         return content
 
-    elif command == 'WRITE REGISTRY':  
+    elif command == 'WRITE REGISTRY':
         content = write_registry(parameter)
         print(content)
         return content
 
-    elif command == 'SET REGISTRY':  
+    elif command == 'SET REGISTRY':
         content = set_registry(parameter)
         return content
 
-    elif command == 'CREATE REGISTRY':  
+    elif command == 'CREATE REGISTRY':
         content = create_registry(parameter)
         return content
 
-    elif command == 'GET REGISTRY':  
+    elif command == 'GET REGISTRY':
         content = get_registry(parameter)
         return content
 
-    elif command == 'DELETA VALUE REGISTRY':  
+    elif command == 'DELETA VALUE REGISTRY':
         content = del_value_registry(parameter)
         return content
 
-    elif command == 'DELETE KEY REGISTRY':  
+    elif command == 'DELETE KEY REGISTRY':
         content = del_key_registry(parameter)
         return content
 
@@ -224,7 +229,7 @@ def execute(command, parameter=None):  # parameter
 
 
 def main():
-    
+
     r = Receiver()
 
     unanswered_mails = r.get_unanswered_mails()
@@ -234,7 +239,7 @@ def main():
         if cm:
             content = execute(cm, para)
             r.reply(mail_number, content)
-        
+
     return
 
 

@@ -1,9 +1,10 @@
 import os
 
+
 class Process():
     def __init__(self):
         pass
- 
+
     def run(self, code, id=0):
         if code == 'view':
             return self.process_view()
@@ -13,7 +14,8 @@ class Process():
 
     def process_view(self):
         try:
-            data = os.popen('powershell "gps |  select name, id, {$_.Threads.Count}').read()
+            data = os.popen(
+                'powershell "gps |  select name, id, {$_.Threads.Count}').read()
             return data
         except OSError:
             return False

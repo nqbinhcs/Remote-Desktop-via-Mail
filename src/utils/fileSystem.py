@@ -4,18 +4,28 @@ import os
 import shutil
 from pathlib import Path
 
+
 class FileSystem:
     def __init__(self):
         pass
- 
+
     def run(self, code, parameters):
+        """_summary_
+
+        Args:
+            code (_type_): _description_
+            parameters (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         if code == 'view':
             return self.getTree()
         elif code == 'copy':
             return self.copy(parameters)
         elif code == 'download':
             return self.download(parameters)
-        
+
         return False
 
     def getTree(self, path=None):
@@ -36,15 +46,15 @@ class FileSystem:
                 j -= 1
                 i -= 1
             i += 1
-            if i == j: break
-            
+            if i == j:
+                break
+
         return tree
 
     def copy(self, parameters):
         _, src, _, dst, _ = parameters.split('"')
-        src = src.replace("/","\\")
-        dst = dst.replace("/","\\")
-
+        src = src.replace("/", "\\")
+        dst = dst.replace("/", "\\")
 
         try:
             dst_path = os.path.join(dst, src.split('\\')[-1])
@@ -54,4 +64,4 @@ class FileSystem:
         return True
 
     def download(self, parameters):
-        print('attach file')
+        return parameters

