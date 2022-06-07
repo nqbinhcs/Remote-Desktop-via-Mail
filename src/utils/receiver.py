@@ -8,22 +8,12 @@ from email.mime.base import MIMEBase
 from email import encoders
 from textwrap import dedent
 from email import encoders
-
+from utils.configs import *
 import os
 
-
-SMTP_SSL_HOST = 'smtp.gmail.com'
 SMTP_SSL_PORT = 465
+SMTP_SSL_HOST = 'smtp.gmail.com'
 IMAP_SSL_HOST = 'imap.gmail.com'
-
-# use username or email to log in
-DEFAULT_USERNAME = 'receiverimap002@gmail.com'
-# DEFAULT_PASSWORD = 'receiver1234'  # encrypted password using JSON
-DEFAULT_PASSWORD = 'orkphlqjqbsnrvin'  # encrypted password using JSON
-
-# TRUSTED SENDERS
-TRUSTED_SENDERS = ['sendersmtp001@gmail.com',
-                   'nguyenhieu82132@gmail.com']  # encrypted using JSON
 
 # SUBJECCT
 RECOGNIZE_SUBJECT = 'RDM'
@@ -34,7 +24,7 @@ COMMANDS = ['LIST PROCESS', 'KILL PROCESS', 'LIST APP', 'KILL APP', 'CAPTURE SCR
 
 
 # TEMPLATES
-TEMPLATE_PATH = os.path.join('src', 'templates')
+TEMPLATE_PATH = 'templates'
 TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kill-process.html',
                        'LIST APP': 'list-app.html', 'KILL APP': 'kil-app.html', 'CAPTURE SCREEN': 'capture-screen.html',
                        'RECORD SCREEN': 'record-screen.html', 'SHOT WEBCAM': 'shot-webcam.html', 'RECORD WEBCAM': 'record-webcam.html',
@@ -42,22 +32,18 @@ TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kil
                        'SHUTDOWN': 'shutdown.html', 'RESTART': 'restart.html'}
 
 
-# TODO
-# Auto read mail to extract command in 5-10s => receiver.py
-# Format
-# [RDM - COMMAND] - content
-
-
 class Receiver():
-    def __init__(self, username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD):
+    def __init__(self):
+
+        self.username, self.password, self.trusted_sender = get_configs()
 
         self.server = smtplib.SMTP_SSL(SMTP_SSL_HOST, SMTP_SSL_PORT)
-        self.server.login(username, password)
-        self.addrs = username
+        self.server.login(self.username, self.password)
+        self.addrs = self.username
 
         # connect to the server and go to its inbox
         self.mail = imaplib.IMAP4_SSL(IMAP_SSL_HOST)
-        self.mail.login(username, password)
+        self.mail.login(self.username, self.password)
         # we choose the inbox but you can select others
         self.mail.select('inbox')
 
@@ -89,7 +75,7 @@ class Receiver():
         print(f'Subject: {mail_subject}')
         print(f'Content: {mail_content}')
 
-        if mail_from not in TRUSTED_SENDERS:
+        if mail_from not in self.trusted_sender:
             return None, None
 
         subject, command_subject = mail_subject.split('-')

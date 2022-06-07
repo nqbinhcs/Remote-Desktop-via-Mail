@@ -8,6 +8,7 @@ from utils.keylogger import KeyLogger
 from utils.fileSystem import FileSystem
 from utils.registry import Registry
 from utils.receiver import Receiver
+from utils.configs import *
 
 
 # Process
