@@ -1,5 +1,6 @@
 
 import os
+from time import sleep
 from utils.process import Process
 from utils.application import Application
 from utils.screen import Screen
@@ -13,11 +14,6 @@ from utils.configs import *
 
 # Process
 def list_process():
-    """List all process of desktop
-
-    Returns:
-        _type_ -- _description_
-    """
     doit = Process()
     processes = doit.run(code='view')
     return processes
@@ -88,7 +84,7 @@ def copy_fileSystem(parameters):
     return succeed_status
 
 
-def download_fileSystem(parameters):  # not done
+def download_fileSystem(parameters):
     doit = FileSystem()
     succeed_status = doit.run('download', parameters)
     return succeed_status
@@ -230,18 +226,19 @@ def execute(command, parameter=None):  # parameter
 
 
 def main():
-
+    print("Running..")
     r = Receiver()
-
-    unanswered_mails = r.get_unanswered_mails()
-
-    for mail_number in unanswered_mails:
-        cm, para = r.is_valid_mail(mail_number)
-        if cm:
-            content = execute(cm, para)
-            r.reply(mail_number, content)
-
-    return
+    try:
+        while True:
+            unanswered_mails = r.get_unanswered_mails()
+            for mail_number in unanswered_mails:
+                cm, para = r.is_valid_mail(mail_number)
+                if cm:
+                    content = execute(cm, para)
+                    r.reply(mail_number, content)
+            sleep(5)
+    finally:
+        r.quit()
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import winreg
 import os
 
-# FORMAT ! 
+# FORMAT !
 '''
 Email:
 
@@ -9,7 +9,7 @@ Subject: RDM-["WRITE", "GET", "CREATE", "SET", "DELETE VALUE", "DELETE KEY"] REG
 Content:
     <parameters>
 '''
- 
+
 # Type
 '''
 1. Write registry file
@@ -55,6 +55,7 @@ Content:
 
 '''
 
+
 class Registry:
     def __init__(self):
         pass
@@ -70,7 +71,7 @@ class Registry:
         HKEY = self.baseRegistryKey(HKEY)
         if not HKEY:
             return False
-        
+
         reg = winreg.ConnectRegistry(None, HKEY)
 
         if (code == "get") & (len(Pars) == 2):
@@ -83,11 +84,11 @@ class Registry:
             return self.delete_value_registry(reg, Pars[0], Pars[1])
         elif (code == "delete-key") & (len(Pars) == 1):
             return self.delete_key_registry(reg, Pars[0])
-        
+
         return False
 
-
     # type 1
+
     def write_file_registry(self, parameters=None):
         if parameters:
             # Case 1: Create fileReg.reg in .temp folder
@@ -104,43 +105,44 @@ class Registry:
 
         return True
 
-
     # type 2
+
     def get_registry(self, reg, path, name):
 
         try:
-            key =  winreg.OpenKey(reg, path, 0, winreg.KEY_QUERY_VALUE)
-            result = winreg.QueryValueEx(key, name) 
-            
+            key = winreg.OpenKey(reg, path, 0, winreg.KEY_QUERY_VALUE)
+            result = winreg.QueryValueEx(key, name)
+
             if not result[0]:
                 return False
             else:
                 if (result[1] == winreg.REG_MULTI_SZ):
                     data = ''
-                    for x in result[0]: data += x + '\n'
+                    for x in result[0]:
+                        data += x + '\n'
                 elif (result[1] == winreg.REG_BINARY):
                     data = ' '.join('%02x' % x for x in result[0])
                 else:
                     data = str(result[0])
-            winreg.CloseKey(key) 
+            winreg.CloseKey(key)
 
             return data
 
         except OSError:
             return False
 
-
     # type 3
+
     def create_registry(self, reg, path):
         try:
             winreg.CreateKey(reg, path)
         except OSError:
             return False
-        
+
         return True
 
-
     # type 4
+
     def set_registry(self, reg, path, name, datatype, value):
 
         datatype = self.baseDataType(datatype)
@@ -153,20 +155,20 @@ class Registry:
             elif datatype == winreg.REG_BINARY:
                 value = value.replace(' ', '')
                 value = bytearray.fromhex(value)
-            key =  winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
+            key = winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
             winreg.SetValueEx(key, name, 0, datatype, value)
             winreg.CloseKey(key)
-            
+
         except OSError:
             return False
 
         return True
 
-
     # type 5
+
     def delete_value_registry(self, reg, path, name):
         try:
-            key =  winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
+            key = winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
             winreg.DeleteValue(key, name)
 
         except OSError:
@@ -174,8 +176,8 @@ class Registry:
 
         return True
 
-
     # type 6
+
     def delete_key_registry(self, reg, path):
         try:
             winreg.DeleteKeyEx(reg, path)
@@ -184,7 +186,6 @@ class Registry:
             return False
 
         return True
-        
 
     def baseRegistryKey(self, name):
         if (len(name) == 0):

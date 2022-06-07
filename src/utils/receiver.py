@@ -11,11 +11,12 @@ from email import encoders
 from utils.configs import *
 import os
 
+# Configurations of services
 SMTP_SSL_PORT = 465
 SMTP_SSL_HOST = 'smtp.gmail.com'
 IMAP_SSL_HOST = 'imap.gmail.com'
 
-# SUBJECCT
+# Subject of mail
 RECOGNIZE_SUBJECT = 'RDM'
 COMMANDS = ['LIST PROCESS', 'KILL PROCESS', 'LIST APP', 'KILL APP', 'CAPTURE SCREEN', 'RECORD SCREEN',
             'SHOT WEBCAM', 'RECORD WEBCAM',  'VIEW FILE SYSTEM',  'COPY FILE SYSTEM', 'KEYLOGGER', 'SHUTDOWN', 'RESTART',
@@ -23,7 +24,7 @@ COMMANDS = ['LIST PROCESS', 'KILL PROCESS', 'LIST APP', 'KILL APP', 'CAPTURE SCR
             'DELETE KEY  REGISTRY',  'DOWNLOAD FILE SYSTEM']
 
 
-# TEMPLATES
+# Templates
 TEMPLATE_PATH = 'templates'
 TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kill-process.html',
                        'LIST APP': 'list-app.html', 'KILL APP': 'kil-app.html', 'CAPTURE SCREEN': 'capture-screen.html',
@@ -33,14 +34,16 @@ TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 'KILL PROCESS': 'kil
 
 
 class Receiver():
+    """A Receiver for reading and auto-replying 
+    """
+
     def __init__(self):
-
+        """Inits Receiver with username, password, trusted senter, and configurations for server
+        """
         self.username, self.password, self.trusted_sender = get_configs()
-
         self.server = smtplib.SMTP_SSL(SMTP_SSL_HOST, SMTP_SSL_PORT)
         self.server.login(self.username, self.password)
         self.addrs = self.username
-
         # connect to the server and go to its inbox
         self.mail = imaplib.IMAP4_SSL(IMAP_SSL_HOST)
         self.mail.login(self.username, self.password)
@@ -48,13 +51,20 @@ class Receiver():
         self.mail.select('inbox')
 
     def get_unanswered_mails(self):
+        """Get unanswered mails
+
+        :return: (list) a list of unanswered mails
+        """
         self.mail.select(readonly=False)
-        # _, data = self.mail.search(None, 'ALL')
         _, data = self.mail.search(None, '(UNANSWERED)')
         self.mail.close()
         return data[0].split()
 
     def is_valid_mail(self, mail_number):
+        """Check if a mail satisfied with conditions
+        :param mail_number: (str)
+        :return: (str, str) as command, parameter of command
+        """
         self.mail.select(readonly=True)
         _, data = self.mail.fetch(mail_number, '(RFC822)')
         self.mail.close()
@@ -87,6 +97,10 @@ class Receiver():
         return command_subject, mail_content
 
     def reply(self, mail_number, content):
+        """Reply mail with mail number and mark 
+        :param mail_number: (str)
+        :param content: (str)
+        """
         self.mail.select(readonly=True)
         _, data = self.mail.fetch(mail_number, '(RFC822)')
         self.mail.close()
@@ -96,6 +110,11 @@ class Receiver():
         self.mail.close()
 
     def create_auto_reply(self, original, content):
+        """Create the reply mail of original mail
+        :param original: (mail)
+        :param content: (str)
+        :return: (mail) a replied mail with content
+        """
         mail = MIMEMultipart('alternative')
         mail['Message-ID'] = make_msgid()
         mail['References'] = mail['In-Reply-To'] = original['Message-ID']
@@ -166,10 +185,8 @@ class Receiver():
             body_html = body_html.format(outputHTML)
         else:
             body_html = body_html.format(content)
-        # print(body_html)
 
-        # attach
-        # mail.attach(MIMEText(dedent(content), 'plain'))
+        # attach html
         mail.attach(MIMEText(body_html, 'html'))
 
         # attach files
@@ -183,6 +200,10 @@ class Receiver():
         return mail
 
     def send_auto_reply(self, original, content):
+        """Send the reply mail
+        :param original: (mail)
+        :param content: (str)
+        """
         self.server.sendmail(
             self.addrs, [original['From']],
             self.create_auto_reply(original, content).as_bytes())
@@ -191,6 +212,10 @@ class Receiver():
         print(log)
 
     def attach_file(self, file_name):
+        """Attach files 
+        :param file_name: (str)
+        :return: (mail) a mail with attached file
+        """
         try:
             with open(file_name, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
@@ -208,8 +233,6 @@ class Receiver():
             return None
 
     def quit(self):
+        """Quit server
+        """
         self.server.quit()
-
-
-# R = Receiver()
-# R.get_recent_mail()

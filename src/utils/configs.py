@@ -2,6 +2,9 @@ import json
 
 
 def get_configs():
+    """Get configurations from configs.json
+    :return: (str,str,list) username, password, trusted sender list
+    """
     with open('configs/configs.json') as json_file:
         data = json.load(json_file)
         USERNAME = data['account'][0]['username']

@@ -6,18 +6,15 @@ from pathlib import Path
 
 
 class FileSystem:
-    def __init__(self):
-        pass
+    """An class for managing files
+    """
 
     def run(self, code, parameters):
-        """_summary_
+        """View, copy and download files
 
-        Args:
-            code (_type_): _description_
-            parameters (_type_): _description_
-
-        Returns:
-            _type_: _description_
+        :param code: (str) 'view', 'copy', or 'download'
+        :param parameters: (str) directory
+        :return: (str) result after executing command
         """
         if code == 'view':
             return self.getTree()
@@ -29,6 +26,10 @@ class FileSystem:
         return False
 
     def getTree(self, path=None):
+        """Get files in directory
+        :param path: (str) 
+        :return: (list) list of files
+        """
         if path == None:
             path = os.getcwd().split('\\')[0]
         else:
@@ -52,6 +53,11 @@ class FileSystem:
         return tree
 
     def copy(self, parameters):
+        """Copy a file from source to destination
+
+        :param parameters: (str) 
+        :return: (bool) status after copying
+        """
         _, src, _, dst, _ = parameters.split('"')
         src = src.replace("/", "\\")
         dst = dst.replace("/", "\\")
@@ -64,4 +70,8 @@ class FileSystem:
         return True
 
     def download(self, parameters):
+        """Download a file with path provided
+        :param parameters: (str)
+        :return: (str) file
+        """
         return parameters
