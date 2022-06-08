@@ -1,72 +1,30 @@
 import winreg
 import os
 
-# FORMAT !
-'''
-Email:
-
-Subject: RDM-["WRITE", "GET", "CREATE", "SET", "DELETE VALUE", "DELETE KEY"] REGISTRY
-Content:
-    <parameters>
-'''
-
-# Type
-'''
-1. Write registry file
-    Two types:
-        1) text: be written on the content block of the email
-            Creating a .reg file - fileReg.reg, to store the text from the content block (in .temp folder)
-            #--> The content block is NOT EMPTY!
-
-        2) fileReg.reg: be attached to the email 
-            The file - fileReg.reg, will be downloaded and saved in .temp folder
-            #--> The content block is EMPTY!
-
-# Parameters:
-        + Path: <HKEY>/.../<Name of a program>
-        + Name: name of a registry
-        + Value: value of a registry
-        + Datatype: [String, Binary, DWORD, QWORD, Multi-String, Expandable string]
-
-
-2. Get value of registry
-
-    Content: <Path>,<Name>
-
-
-3. Create a new registry
-
-    Content: <Path>,<Name>
-
-
-4. Set registry: set value of a particular registry
-
-    Content: <Path>,<Name>,<Datatype>,<Value>
-
-
-5. Delete value of a registry
-
-    Content: <Path>,<Name>
-
-
-6. Delete a key
-
-    Content: <Path>
-
-'''
-
-
 class Registry:
+    """A class for managing registry
+    """
+
     def __init__(self):
         pass
 
     def run(self, code, parameters=None):
+        """Write a new key / Get value / Create an empty key / Set value of a key / Delete value of a key /Delete key
+        :param code: (str) 'write' / 'get' / 'create' / 'set' / 'delete-value' / 'delete-key'
+        :param parameters: (str) path of a key or value of key,...
+        :return: value if the code is 'get', else True if the process is successful and False if not
+        """
         if code == 'write':
             return self.write_file_registry(parameters)
 
+        # parameters += ','
         HKEY, Pars = parameters.split(',', 1)
         # Pars storing parameters, such as: path, name, value, datatype (maybe)
         Pars = Pars.split(',')
+
+        print(HKEY)
+        print('Pars: ' )
+        print(Pars)
 
         HKEY = self.baseRegistryKey(HKEY)
         if not HKEY:
@@ -76,8 +34,8 @@ class Registry:
 
         if (code == "get") & (len(Pars) == 2):
             return self.get_registry(reg, Pars[0], Pars[1])
-        elif (code == "create") & (len(Pars) == 1):
-            return self.create_registry(reg, Pars[0])
+        elif (code == "create") & (len(Pars) == 2):
+            return self.create_registry(reg, Pars[0], Pars[1])
         elif (code == "set") & (len(Pars) == 4):
             return self.set_registry(reg, Pars[0], Pars[1], Pars[2], Pars[3])
         elif (code == "delete-value") & (len(Pars) == 2):
@@ -90,6 +48,10 @@ class Registry:
     # type 1
 
     def write_file_registry(self, parameters=None):
+        """Write a new value on the system
+        :param parameters: (str) None if user sent a file .reg or some block of code according file .reg structure 
+        :return: (bool) True if the process is successful and False if not
+        """
         if parameters:
             # Case 1: Create fileReg.reg in .temp folder
             fi = open(os.path.join(".temp", "fileReg.reg"), "w")
@@ -108,9 +70,15 @@ class Registry:
     # type 2
 
     def get_registry(self, reg, path, name):
-
+        """Get the value of a key according path and name
+        :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param path: (str) leads to the key
+        :param name: (str) name of the value which user want to get
+        :return: (bool) True if the process is successful and False if not 
+        """
         try:
-            key = winreg.OpenKey(reg, path, 0, winreg.KEY_QUERY_VALUE)
+            path = path.replace('/' ,'\\')
+            key = winreg.OpenKey(reg, path, 0, access=winreg.KEY_ALL_ACCESS)
             result = winreg.QueryValueEx(key, name)
 
             if not result[0]:
@@ -133,8 +101,15 @@ class Registry:
 
     # type 3
 
-    def create_registry(self, reg, path):
+    def create_registry(self, reg, path, key_name):
+        """Create an empty key (without value) according the path
+        :param reg: (registry hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param path: (str) leads to the key
+        :return: (bool) True if the process is successful and False if not
+        """
         try:
+            path += '/' + key_name
+            path = path.replace('/' ,'\\')
             winreg.CreateKey(reg, path)
         except OSError:
             return False
@@ -144,6 +119,14 @@ class Registry:
     # type 4
 
     def set_registry(self, reg, path, name, datatype, value):
+        """Set value of a key according path & name
+        :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param path: (str) leads to the key
+        :param name: (str) name of the value which user want to set
+        :param datatype: (registry datatype) includes: binary (Binary data), dword (Numeral), qwrod (64-bit numeric value), text (sz), mutul sz (array of strings) 
+        :param value: (str) new value
+        :return: (bool) True if the process is successful and False if not
+        """
 
         datatype = self.baseDataType(datatype)
 
@@ -155,7 +138,8 @@ class Registry:
             elif datatype == winreg.REG_BINARY:
                 value = value.replace(' ', '')
                 value = bytearray.fromhex(value)
-            key = winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
+            path = path.replace('/' ,'\\')
+            key = winreg.OpenKey(reg, path, 0, access=winreg.KEY_ALL_ACCESS)
             winreg.SetValueEx(key, name, 0, datatype, value)
             winreg.CloseKey(key)
 
@@ -167,8 +151,15 @@ class Registry:
     # type 5
 
     def delete_value_registry(self, reg, path, name):
+        """Delete value of a registry according path & name
+        :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param path: (str) leads to the key
+        :param name: (str) name of the value which user want to delete
+        :return: (bool) True if the process is successful and False if not
+        """
         try:
-            key = winreg.OpenKey(reg, path, 0, winreg.KEY_SET_VALUE)
+            path = path.replace('/' ,'\\')
+            key = winreg.OpenKey(reg, path, 0, access=winreg.KEY_ALL_ACCESS)
             winreg.DeleteValue(key, name)
 
         except OSError:
@@ -179,15 +170,46 @@ class Registry:
     # type 6
 
     def delete_key_registry(self, reg, path):
+        """Delete a registry according path
+        :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param path: (str) leads to the key
+        :return: (bool) True if the process is successful and False if not
+        """
+        return self.deleteSubkey(reg, path)
+
+    def deleteSubkey(self, reg, key1, key2=""):
+        """Delete all of key1's subkeys and then delete key1 key 
+        :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
+        :param key1: (str) leads to key1 key
+        :param key2: (str) name of subkey of key1 key
+        :return: (bool) True if the process is successful and False if not
+        """
+        if key2=="":
+            currentkey = key1
+        else:
+            currentkey = key1+ "\\" +key2
+
         try:
-            winreg.DeleteKeyEx(reg, path)
+            open_key = winreg.OpenKey(reg, currentkey ,0, access=winreg.KEY_ALL_ACCESS)
+            infokey = winreg.QueryInfoKey(open_key)
+            for x in range(0, infokey[0]):
+                subkey = winreg.EnumKey(open_key, 0)
+                try:
+                    winreg.DeleteKey(open_key, subkey)
+                except:
+                    self.deleteSubkey(reg, currentkey, subkey)
 
-        except OSError:
+            winreg.DeleteKey(open_key,"")
+            open_key.Close()
+        except:
             return False
-
         return True
 
     def baseRegistryKey(self, name):
+        """Get register hotkey according name
+        :param name: (str) "HKEY_CLASSES_ROOT" / "HKEY_CURRENT_USER" / "HKEY_LOCAL_MACHINE" / "HKEY_USERS" / "HKEY_CURRENT_CONFIG"
+        :return: (registry hotkey) corresponding to name
+        """
         if (len(name) == 0):
             return None
         if name == "HKEY_CLASSES_ROOT":
@@ -200,10 +222,14 @@ class Registry:
             return winreg.HKEY_USERS
         elif name == "HKEY_CURRENT_CONFIG":
             return winreg.HKEY_CURRENT_CONFIG
-        else:
+        else: 
             return None
 
     def baseDataType(self, name):
+        """Get datatype according name
+        :param name: (str) "String" / "Binary" / "DWORD" / "QWORD" / "Multi-String" / "Expandable string"
+        :return: (registry hotkey) corresponding to name
+        """
         if len(name) == 0:
             return None
         if name == "String":
@@ -218,5 +244,5 @@ class Registry:
             return winreg.REG_MULTI_SZ
         elif name == "Expandable string":
             return winreg.REG_EXPAND_SZ
-        else:
+        else: 
             return None
