@@ -118,6 +118,7 @@ def create_registry(parameters):
 def del_value_registry(parameters):
     doit = Registry()
     succeed_status = doit.run('delete-value', parameters)
+    print(succeed_status)
     return succeed_status
 
 
@@ -204,7 +205,7 @@ def execute(command, parameter=None):  # parameter
         content = get_registry(parameter)
         return content
 
-    elif command == 'DELETA VALUE REGISTRY':
+    elif command == 'DELETE VALUE REGISTRY':
         content = del_value_registry(parameter)
         return content
 
