@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>receiver module &mdash; Remote Desktop via Mail  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="registry module" href="registry.html" />
+    <link rel="prev" title="process module" href="process.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Remote Desktop via Mail
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">utils</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="application.html">application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configs.html">configs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fileSystem.html">fileSystem module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keylogger.html">keylogger module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process.html">process module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">receiver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="registry.html">registry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="screen.html">screen module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webcam.html">webcam module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Remote Desktop via Mail</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">utils</a> &raquo;</li>
+      <li>receiver module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/receiver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-receiver">
+<span id="receiver-module"></span><h1>receiver module<a class="headerlink" href="#module-receiver" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="receiver.Receiver">
+<em class="property">class </em><code class="descclassname">receiver.</code><code class="descname">Receiver</code><a class="reference internal" href="_modules/receiver.html#Receiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Receiver for reading and auto-replying</p>
+<dl class="method">
+<dt id="receiver.Receiver.attach_file">
+<code class="descname">attach_file</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.attach_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.attach_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – (str)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(mail) a mail with attached file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.create_auto_reply">
+<code class="descname">create_auto_reply</code><span class="sig-paren">(</span><em>original</em>, <em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.create_auto_reply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.create_auto_reply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the reply mail of original mail</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>original</strong> – (mail)</li>
+<li><strong>content</strong> – (str)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(mail) a replied mail with content</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.get_unanswered_mails">
+<code class="descname">get_unanswered_mails</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.get_unanswered_mails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.get_unanswered_mails" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get unanswered mails</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(list) a list of unanswered mails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.is_valid_mail">
+<code class="descname">is_valid_mail</code><span class="sig-paren">(</span><em>mail_number</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.is_valid_mail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.is_valid_mail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a mail satisfied with conditions</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mail_number</strong> – (str)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(str, str) as command, parameter of command</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.quit">
+<code class="descname">quit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quit server</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.reply">
+<code class="descname">reply</code><span class="sig-paren">(</span><em>mail_number</em>, <em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.reply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.reply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reply mail with mail number and mark</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mail_number</strong> – (str)</li>
+<li><strong>content</strong> – (str)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="receiver.Receiver.send_auto_reply">
+<code class="descname">send_auto_reply</code><span class="sig-paren">(</span><em>original</em>, <em>content</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/receiver.html#Receiver.send_auto_reply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#receiver.Receiver.send_auto_reply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the reply mail</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>original</strong> – (mail)</li>
+<li><strong>content</strong> – (str)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="process.html" class="btn btn-neutral float-left" title="process module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="registry.html" class="btn btn-neutral float-right" title="registry module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 20120412 - 20120476 - 20120596.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

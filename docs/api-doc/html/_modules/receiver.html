@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>receiver &mdash; Remote Desktop via Mail  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Remote Desktop via Mail
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">utils</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Remote Desktop via Mail</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>receiver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for receiver</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">email</span>
+<span class="kn">import</span> <span class="nn">imaplib</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime.text</span> <span class="kn">import</span> <span class="n">MIMEText</span>
+<span class="kn">from</span> <span class="nn">email.utils</span> <span class="kn">import</span> <span class="n">formataddr</span><span class="p">,</span> <span class="n">make_msgid</span>
+<span class="kn">from</span> <span class="nn">email.mime.multipart</span> <span class="kn">import</span> <span class="n">MIMEMultipart</span>
+<span class="kn">from</span> <span class="nn">email.mime.base</span> <span class="kn">import</span> <span class="n">MIMEBase</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+<span class="kn">from</span> <span class="nn">email</span> <span class="kn">import</span> <span class="n">encoders</span>
+<span class="c1"># from utils.configs import *</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Configurations of services</span>
+<span class="n">SMTP_SSL_PORT</span> <span class="o">=</span> <span class="mi">465</span>
+<span class="n">SMTP_SSL_HOST</span> <span class="o">=</span> <span class="s1">&#39;smtp.gmail.com&#39;</span>
+<span class="n">IMAP_SSL_HOST</span> <span class="o">=</span> <span class="s1">&#39;imap.gmail.com&#39;</span>
+
+<span class="c1"># Subject of mail</span>
+<span class="n">RECOGNIZE_SUBJECT</span> <span class="o">=</span> <span class="s1">&#39;RDM&#39;</span>
+<span class="n">COMMANDS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LIST PROCESS&#39;</span><span class="p">,</span> <span class="s1">&#39;KILL PROCESS&#39;</span><span class="p">,</span> <span class="s1">&#39;LIST APP&#39;</span><span class="p">,</span> <span class="s1">&#39;KILL APP&#39;</span><span class="p">,</span> <span class="s1">&#39;CAPTURE SCREEN&#39;</span><span class="p">,</span> <span class="s1">&#39;RECORD SCREEN&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;SHOT WEBCAM&#39;</span><span class="p">,</span> <span class="s1">&#39;RECORD WEBCAM&#39;</span><span class="p">,</span>  <span class="s1">&#39;VIEW FILE SYSTEM&#39;</span><span class="p">,</span>  <span class="s1">&#39;COPY FILE SYSTEM&#39;</span><span class="p">,</span> <span class="s1">&#39;KEYLOGGER&#39;</span><span class="p">,</span> <span class="s1">&#39;SHUTDOWN&#39;</span><span class="p">,</span> <span class="s1">&#39;RESTART&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;WRITE REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;GET REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;CREATE REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;SET REGISTRY&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE VALUE  REGISTRY&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;DELETE KEY  REGISTRY&#39;</span><span class="p">,</span>  <span class="s1">&#39;DOWNLOAD FILE SYSTEM&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># Templates</span>
+<span class="n">TEMPLATE_PATH</span> <span class="o">=</span> <span class="s1">&#39;templates&#39;</span>
+<span class="n">TEMPLATE_FILE_NAMES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;LIST PROCESS&#39;</span><span class="p">:</span> <span class="s1">&#39;list-process.html&#39;</span><span class="p">,</span> <span class="s1">&#39;KILL PROCESS&#39;</span><span class="p">:</span> <span class="s1">&#39;kill-process.html&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;LIST APP&#39;</span><span class="p">:</span> <span class="s1">&#39;list-app.html&#39;</span><span class="p">,</span> <span class="s1">&#39;KILL APP&#39;</span><span class="p">:</span> <span class="s1">&#39;kil-app.html&#39;</span><span class="p">,</span> <span class="s1">&#39;CAPTURE SCREEN&#39;</span><span class="p">:</span> <span class="s1">&#39;capture-screen.html&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;RECORD SCREEN&#39;</span><span class="p">:</span> <span class="s1">&#39;record-screen.html&#39;</span><span class="p">,</span> <span class="s1">&#39;SHOT WEBCAM&#39;</span><span class="p">:</span> <span class="s1">&#39;shot-webcam.html&#39;</span><span class="p">,</span> <span class="s1">&#39;RECORD WEBCAM&#39;</span><span class="p">:</span> <span class="s1">&#39;record-webcam.html&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;VIEW FILE SYSTEM&#39;</span><span class="p">:</span> <span class="s1">&#39;file-system.html&#39;</span><span class="p">,</span> <span class="s1">&#39;DOWNLOAD FILE SYSTEM&#39;</span><span class="p">:</span> <span class="s1">&#39;file-download.html&#39;</span><span class="p">,</span> <span class="s1">&#39;REGISTRY&#39;</span><span class="p">:</span> <span class="s1">&#39;registry.html&#39;</span><span class="p">,</span> <span class="s1">&#39;KEYLOGGER&#39;</span><span class="p">:</span> <span class="s1">&#39;keylogger.html&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;SHUTDOWN&#39;</span><span class="p">:</span> <span class="s1">&#39;shutdown.html&#39;</span><span class="p">,</span> <span class="s1">&#39;RESTART&#39;</span><span class="p">:</span> <span class="s1">&#39;restart.html&#39;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="Receiver"><a class="viewcode-back" href="../receiver.html#receiver.Receiver">[docs]</a><span class="k">class</span> <span class="nc">Receiver</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A Receiver for reading and auto-replying </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits Receiver with username, password, trusted senter, and configurations for server</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trusted_sender</span> <span class="o">=</span> <span class="n">get_configs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">SMTP_SSL_HOST</span><span class="p">,</span> <span class="n">SMTP_SSL_PORT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">addrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span>
+        <span class="c1"># connect to the server and go to its inbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span> <span class="o">=</span> <span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">(</span><span class="n">IMAP_SSL_HOST</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>
+        <span class="c1"># we choose the inbox but you can select others</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;inbox&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Receiver.get_unanswered_mails"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.get_unanswered_mails">[docs]</a>    <span class="k">def</span> <span class="nf">get_unanswered_mails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get unanswered mails</span>
+
+<span class="sd">        :return: (list) a list of unanswered mails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;(UNANSWERED)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Receiver.is_valid_mail"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.is_valid_mail">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mail_number</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if a mail satisfied with conditions</span>
+
+<span class="sd">        :param mail_number: (str)</span>
+<span class="sd">        :return: (str, str) as command, parameter of command</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">readonly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">mail_number</span><span class="p">,</span> <span class="s1">&#39;(RFC822)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">mail_from</span> <span class="o">=</span> <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">mail_subject</span> <span class="o">=</span> <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mail</span><span class="o">.</span><span class="n">is_multipart</span><span class="p">():</span>
+            <span class="n">mail_content</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_payload</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">:</span>
+                    <span class="n">mail_content</span> <span class="o">+=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mail_content</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">get_payload</span><span class="p">()</span>
+        <span class="n">mail_content</span> <span class="o">=</span> <span class="n">mail_content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;From: </span><span class="si">{</span><span class="n">mail_from</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Subject: </span><span class="si">{</span><span class="n">mail_subject</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Content: </span><span class="si">{</span><span class="n">mail_content</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mail_from</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trusted_sender</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="n">subject</span><span class="p">,</span> <span class="n">command_subject</span> <span class="o">=</span> <span class="n">mail_subject</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">subject</span> <span class="o">!=</span> <span class="n">RECOGNIZE_SUBJECT</span> <span class="ow">or</span> <span class="n">command_subject</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">COMMANDS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&gt; This mail is valid&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">command_subject</span><span class="p">,</span> <span class="n">mail_content</span></div>
+
+<div class="viewcode-block" id="Receiver.reply"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.reply">[docs]</a>    <span class="k">def</span> <span class="nf">reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mail_number</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reply mail with mail number and mark </span>
+
+<span class="sd">        :param mail_number: (str)</span>
+<span class="sd">        :param content: (str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">readonly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">mail_number</span><span class="p">,</span> <span class="s1">&#39;(RFC822)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_auto_reply</span><span class="p">(</span><span class="n">email</span><span class="o">.</span><span class="n">message_from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">content</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="n">mail_number</span><span class="p">,</span> <span class="s1">&#39;+FLAGS&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">Answered&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Receiver.create_auto_reply"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.create_auto_reply">[docs]</a>    <span class="k">def</span> <span class="nf">create_auto_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the reply mail of original mail</span>
+
+<span class="sd">        :param original: (mail)</span>
+<span class="sd">        :param content: (str)</span>
+<span class="sd">        :return: (mail) a replied mail with content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mail</span> <span class="o">=</span> <span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+        <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">make_msgid</span><span class="p">()</span>
+        <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;References&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;In-Reply-To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original</span><span class="p">[</span><span class="s1">&#39;Message-ID&#39;</span><span class="p">]</span>
+        <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Re: &#39;</span> <span class="o">+</span> <span class="n">original</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span>
+        <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addrs</span>
+        <span class="n">mail</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">original</span><span class="p">[</span><span class="s1">&#39;Reply-To&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">original</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span>
+
+        <span class="c1"># get template command email from command</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">original</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">template</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">TEMPLATE_PATH</span><span class="p">,</span> <span class="n">TEMPLATE_FILE_NAMES</span><span class="p">[</span><span class="n">command</span><span class="p">])</span>
+        <span class="n">body_html</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+        <span class="n">body_html</span> <span class="o">=</span> <span class="n">body_html</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;LIST PROCESS&#39;</span> <span class="ow">or</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;LIST APP&#39;</span><span class="p">:</span>
+            <span class="n">content_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">data_str</span> <span class="o">=</span> <span class="n">content_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;LIST PROCESS&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Memory&quot;</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Compression&quot;</span><span class="p">:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                        <span class="k">break</span>
+
+            <span class="c1">#  loop over our arrays and create our html string</span>
+            <span class="n">outputHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;table&gt;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">//</span><span class="mi">3</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;tr class = </span><span class="se">\&quot;</span><span class="s2">header_table</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;tr&gt;&quot;</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td style=</span><span class="se">\&quot;</span><span class="s2">width:30%</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;td&gt;&quot;</span>
+                    <span class="n">outputHTML</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&lt;/td&gt;&quot;</span>
+                <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/tr&gt;&quot;</span>
+            <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/table&gt;&quot;</span>
+            <span class="n">body_html</span> <span class="o">=</span> <span class="n">body_html</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outputHTML</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;VIEW FILE SYSTEM&#39;</span><span class="p">:</span>
+            <span class="n">content_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">content_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">outputHTML</span> <span class="o">=</span> <span class="s2">&quot;&lt;ul&gt;&lt;li class=</span><span class="se">\&quot;</span><span class="s2">root_dir</span><span class="se">\&quot;</span><span class="s2">&gt;</span><span class="si">{}</span><span class="s2">&lt;ul&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">content_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">content_list</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                    <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;li class=</span><span class="se">\&quot;</span><span class="s2">child_dir_2</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span> <span class="o">+</span> \
+                        <span class="n">content_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&lt;/li&gt;&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;li class=</span><span class="se">\&quot;</span><span class="s2">child_dir_1</span><span class="se">\&quot;</span><span class="s2">&gt;&quot;</span> <span class="o">+</span> \
+                        <span class="n">content_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&lt;/li&gt;&quot;</span>
+
+            <span class="n">outputHTML</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&quot;</span>
+            <span class="n">body_html</span> <span class="o">=</span> <span class="n">body_html</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outputHTML</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">body_html</span> <span class="o">=</span> <span class="n">body_html</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="c1"># attach html</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">body_html</span><span class="p">,</span> <span class="s1">&#39;html&#39;</span><span class="p">))</span>
+
+        <span class="c1"># attach files</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">command</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;CAPTURE SCREEN&#39;</span><span class="p">,</span> <span class="s1">&#39;RECORD SCREEN&#39;</span><span class="p">,</span> <span class="s1">&#39;SHOT WEBCAM&#39;</span><span class="p">,</span> <span class="s1">&#39;RECORD WEBCAM&#39;</span><span class="p">,</span> <span class="s1">&#39;DOWNLOAD FILE SYSTEM&#39;</span><span class="p">]:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">content</span>
+            <span class="k">if</span> <span class="n">command</span> <span class="o">!=</span> <span class="s1">&#39;DOWNLOAD FILE SYSTEM&#39;</span><span class="p">:</span>
+                <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;.temp&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+                <span class="n">mail</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attach_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">mail</span></div>
+
+<div class="viewcode-block" id="Receiver.send_auto_reply"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.send_auto_reply">[docs]</a>    <span class="k">def</span> <span class="nf">send_auto_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send the reply mail</span>
+
+<span class="sd">        :param original: (mail)</span>
+<span class="sd">        :param content: (str)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addrs</span><span class="p">,</span> <span class="p">[</span><span class="n">original</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_auto_reply</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span><span class="o">.</span><span class="n">as_bytes</span><span class="p">())</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="s1">&#39;Replied to “</span><span class="si">%s</span><span class="s1">” for the mail “</span><span class="si">%s</span><span class="s1">”&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">original</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">],</span>
+                                                     <span class="n">original</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">log</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Receiver.attach_file"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.attach_file">[docs]</a>    <span class="k">def</span> <span class="nf">attach_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Attach files </span>
+
+<span class="sd">        :param file_name: (str)</span>
+<span class="sd">        :return: (mail) a mail with attached file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">attachment</span><span class="p">:</span>
+                <span class="n">part</span> <span class="o">=</span> <span class="n">MIMEBase</span><span class="p">(</span><span class="s2">&quot;application&quot;</span><span class="p">,</span> <span class="s2">&quot;octet-stream&quot;</span><span class="p">)</span>
+                <span class="n">part</span><span class="o">.</span><span class="n">set_payload</span><span class="p">(</span><span class="n">attachment</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+            <span class="n">encoders</span><span class="o">.</span><span class="n">encode_base64</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+
+            <span class="n">part</span><span class="o">.</span><span class="n">add_header</span><span class="p">(</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;attachment; filename= </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,)</span>
+
+            <span class="k">return</span> <span class="n">part</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Oh no! We didn</span><span class="se">\&#39;</span><span class="s1">t found the attachment!</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Receiver.quit"><a class="viewcode-back" href="../receiver.html#receiver.Receiver.quit">[docs]</a>    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Quit server</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, 20120412 - 20120476 - 20120596.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
