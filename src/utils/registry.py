@@ -11,7 +11,7 @@ class Registry:
 
     def run(self, code, parameters=None):
         """Write a new key / Get value / Create an empty key / Set value of a key / Delete value of a key /Delete key
-        
+
         :param code: (str) 'write' / 'get' / 'create' / 'set' / 'delete-value' / 'delete-key'
         :param parameters: (str) path of a key or value of key,...
         :return: value if the code is 'get', else True if the process is successful and False if not
@@ -51,7 +51,7 @@ class Registry:
 
     def write_file_registry(self, parameters=None):
         """Write a new value on the system
-        
+
         :param parameters: (str) None if user sent a file .reg or some block of code according file .reg structure 
         :return: (bool) True if the process is successful and False if not
         """
@@ -74,7 +74,7 @@ class Registry:
 
     def get_registry(self, reg, path, name):
         """Get the value of a key according path and name
-        
+
         :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
         :param path: (str) leads to the key
         :param name: (str) name of the value which user want to get
@@ -107,7 +107,7 @@ class Registry:
 
     def create_registry(self, reg, path, key_name):
         """Create an empty key (without value) according the path
-        
+
         :param reg: (registry hotkey) includes: classes root, current user, local machine, users, current cofig
         :param path: (str) leads to the key
         :return: (bool) True if the process is successful and False if not
@@ -125,7 +125,7 @@ class Registry:
 
     def set_registry(self, reg, path, name, datatype, value):
         """Set value of a key according path & name
-        
+
         :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
         :param path: (str) leads to the key
         :param name: (str) name of the value which user want to set
@@ -158,7 +158,7 @@ class Registry:
 
     def delete_value_registry(self, reg, path, name):
         """Delete value of a registry according path & name
-        
+
         :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
         :param path: (str) leads to the key
         :param name: (str) name of the value which user want to delete
@@ -178,7 +178,7 @@ class Registry:
 
     def delete_key_registry(self, reg, path):
         """Delete a registry according path
-        
+
         :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
         :param path: (str) leads to the key
         :return: (bool) True if the process is successful and False if not
@@ -187,7 +187,7 @@ class Registry:
 
     def deleteSubkey(self, reg, key1, key2=""):
         """Delete all of key1's subkeys and then delete key1 key 
-        
+
         :param reg: (register hotkey) includes: classes root, current user, local machine, users, current cofig
         :param key1: (str) leads to key1 key
         :param key2: (str) name of subkey of key1 key
@@ -217,7 +217,7 @@ class Registry:
 
     def baseRegistryKey(self, name):
         """Get register hotkey according name
-        
+
         :param name: (str) "HKEY_CLASSES_ROOT" / "HKEY_CURRENT_USER" / "HKEY_LOCAL_MACHINE" / "HKEY_USERS" / "HKEY_CURRENT_CONFIG"
         :return: (registry hotkey) corresponding to name
         """
@@ -238,7 +238,7 @@ class Registry:
 
     def baseDataType(self, name):
         """Get datatype according name
-        
+
         :param name: (str) "String" / "Binary" / "DWORD" / "QWORD" / "Multi-String" / "Expandable string"
         :return: (registry hotkey) corresponding to name
         """
