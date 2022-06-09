@@ -7,6 +7,7 @@ class Application:
 
     def run(self, code, id=0):
         """View applications or kill a specific application
+
         :param code: (str) 'view' or 'kill'
         :param id: (int) ID of the application, defaults to 0
         :return: (str) result after executing command
@@ -18,12 +19,14 @@ class Application:
 
     def view(self):
         """View all applications
+
         :return: (str) all applications
         """
         return os.popen('powershell "gps | where {$_.MainWindowTitle } | select name, id, {$_.Threads.Count}').read()
 
     def kill(self, id):
         """Kill an application
+
         :param id: (int) ID of the application
         :return: (bool) status of command
         """

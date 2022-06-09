@@ -17,6 +17,7 @@ class Screen():
 
     def run(self, code, time=10):
         """Capture screen or recording screen
+        
         :param code: (str) 'image' or 'video'
         :return: (str) name of a file after executing command
         """
@@ -28,6 +29,7 @@ class Screen():
 
     def screenshot(self):
         """Capture screen
+        
         :return: name of file screenshot
         """
         try:
@@ -47,6 +49,7 @@ class Screen():
 
     def record(self, time):
         """Record screen in x second(s)
+        
         :param time: (int)
         :return: name of file record
         """

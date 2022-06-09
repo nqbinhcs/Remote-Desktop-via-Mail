@@ -3,6 +3,7 @@ import json
 
 def get_configs():
     """Get configurations from configs.json
+
     :return: (str,str,list) username, password, trusted sender list
     """
     with open('configs/configs.json') as json_file:

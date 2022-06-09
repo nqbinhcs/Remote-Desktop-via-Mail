@@ -39,6 +39,7 @@ class Receiver():
 
     def __init__(self):
         """Inits Receiver with username, password, trusted senter, and configurations for server
+
         """
         self.username, self.password, self.trusted_sender = get_configs()
         self.server = smtplib.SMTP_SSL(SMTP_SSL_HOST, SMTP_SSL_PORT)
@@ -62,6 +63,7 @@ class Receiver():
 
     def is_valid_mail(self, mail_number):
         """Check if a mail satisfied with conditions
+
         :param mail_number: (str)
         :return: (str, str) as command, parameter of command
         """
@@ -98,6 +100,7 @@ class Receiver():
 
     def reply(self, mail_number, content):
         """Reply mail with mail number and mark 
+
         :param mail_number: (str)
         :param content: (str)
         """
@@ -111,6 +114,7 @@ class Receiver():
 
     def create_auto_reply(self, original, content):
         """Create the reply mail of original mail
+
         :param original: (mail)
         :param content: (str)
         :return: (mail) a replied mail with content
@@ -201,6 +205,7 @@ class Receiver():
 
     def send_auto_reply(self, original, content):
         """Send the reply mail
+
         :param original: (mail)
         :param content: (str)
         """
@@ -213,6 +218,7 @@ class Receiver():
 
     def attach_file(self, file_name):
         """Attach files 
+
         :param file_name: (str)
         :return: (mail) a mail with attached file
         """
@@ -234,5 +240,6 @@ class Receiver():
 
     def quit(self):
         """Quit server
+
         """
         self.server.quit()

@@ -6,6 +6,7 @@ import datetime
 class Webcam():
     """An class for managing webcam
     """
+
     def __init__(self):
         try:
             os.mkdir('.temp')
@@ -14,6 +15,7 @@ class Webcam():
 
     def run(self, code, time=10):
         """Shot a photo or filming
+
         :param code: (str) 'image' or 'video'
         :return: (str) name of a file after executing command
         """
@@ -26,6 +28,7 @@ class Webcam():
 
     def screenshot(self):
         """Shot a photo
+
         :return: name of file screenshot
         """
         try:
@@ -51,6 +54,7 @@ class Webcam():
 
     def record(self, time):
         """Filming in x second(s)
+
         :param time: (int)
         :return: name of file record
         """

@@ -27,6 +27,7 @@ class FileSystem:
 
     def getTree(self, path=None):
         """Get files in directory
+
         :param path: (str) 
         :return: (list) list of files
         """
@@ -71,6 +72,7 @@ class FileSystem:
 
     def download(self, parameters):
         """Download a file with path provided
+
         :param parameters: (str)
         :return: (str) file
         """

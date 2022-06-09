@@ -7,6 +7,7 @@ class Process():
 
     def run(self, code, id=0):
         """View processes or kill a specific process
+
         :param code: (str) 'view' or 'kill'
         :param id: (int) ID of the process, defaults to 0
         :return: (str) result after executing command
@@ -19,6 +20,7 @@ class Process():
 
     def process_view(self):
         """View all processes
+
         :return: (str) all processes
         """
         try:
@@ -30,6 +32,7 @@ class Process():
 
     def process_kill(self, process_ID):
         """Kill an application
+
         :param process_ID: (int) ID of the process
         :return: (bool) status of command
         """
