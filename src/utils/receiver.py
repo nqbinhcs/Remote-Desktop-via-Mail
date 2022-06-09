@@ -18,39 +18,39 @@ IMAP_SSL_HOST = 'imap.gmail.com'
 
 # Subject of mail
 RECOGNIZE_SUBJECT = 'RDM'
-COMMANDS = ['LIST PROCESS', 'KILL PROCESS', 
-            'LIST APP', 'KILL APP', 
+COMMANDS = ['LIST PROCESS', 'KILL PROCESS',
+            'LIST APP', 'KILL APP',
             'CAPTURE SCREEN', 'RECORD SCREEN',
-            'SHOT WEBCAM', 'RECORD WEBCAM',  
+            'SHOT WEBCAM', 'RECORD WEBCAM',
             'VIEW FILE SYSTEM', 'COPY FILE SYSTEM', 'DOWNLOAD FILE SYSTEM'
-            'KEYLOGGER', 
+            'KEYLOGGER',
             'SHUTDOWN', 'RESTART',
             'WRITE REGISTRY', 'GET REGISTRY', 'CREATE REGISTRY', 'SET REGISTRY', 'DELETE VALUE REGISTRY', 'DELETE KEY REGISTRY']
 
 
 # Templates
 TEMPLATE_PATH = 'templates'
-TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html', 
+TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html',
                        'KILL PROCESS': 'kill-process.html',
-                       'LIST APP': 'list-app.html', 
-                       'KILL APP': 'kill-app.html', 
+                       'LIST APP': 'list-app.html',
+                       'KILL APP': 'kill-app.html',
                        'CAPTURE SCREEN': 'capture-screen.html',
-                       'RECORD SCREEN': 'record-screen.html', 
-                       'SHOT WEBCAM': 'shot-webcam.html', 
+                       'RECORD SCREEN': 'record-screen.html',
+                       'SHOT WEBCAM': 'shot-webcam.html',
                        'RECORD WEBCAM': 'record-webcam.html',
-                       'VIEW FILE SYSTEM': 'file-system.html', 
-                       'COPY FILE SYSTEM': 'copy-file-system.html', 
-                       'DOWNLOAD FILE SYSTEM': 'download-file-system.html', 
+                       'VIEW FILE SYSTEM': 'file-system.html',
+                       'COPY FILE SYSTEM': 'copy-file-system.html',
+                       'DOWNLOAD FILE SYSTEM': 'download-file-system.html',
                        'KEYLOGGER': 'keylogger.html',
-                       'SHUTDOWN': 'shutdown.html', 
+                       'SHUTDOWN': 'shutdown.html',
                        'RESTART': 'restart.html',
                        'REGISTRY': 'registry.html',
-                       'WRITE REGISTRY': 'write-registry.html', 
-                       'GET REGISTRY': 'get-registry.html', 
-                       'CREATE REGISTRY': 'create-registry.html', 
-                       'SET REGISTRY': 'set-registry.html', 
-                       'DELETE VALUE REGISTRY': 'delete-value-registry.html', 
-                       'DELETE KEY REGISTRY': 'delete-key-registry.html',} 
+                       'WRITE REGISTRY': 'write-registry.html',
+                       'GET REGISTRY': 'get-registry.html',
+                       'CREATE REGISTRY': 'create-registry.html',
+                       'SET REGISTRY': 'set-registry.html',
+                       'DELETE VALUE REGISTRY': 'delete-value-registry.html',
+                       'DELETE KEY REGISTRY': 'delete-key-registry.html', }
 
 
 class Receiver():
