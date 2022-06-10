@@ -9,6 +9,19 @@ src/templates/delete-key-registry.html linguist-detectable=false
 src/templates/delete-value-registry.html linguist-detectable=false
 src/templates/download-file-system.html linguist-detectable=false
 
+src/templates/guide.html linguist-detectable=false
+
+
+src/templates/keylogger.html linguist-detectable=false
+
+src/templates/kill-app.html linguist-detectable=false
+
+src/templates/kill-process.html linguist-detectable=false
+
+src/templates/list-app.html linguist-detectable=false
+
+src/templates/list-process.html linguist-detectable=false
+
 
 src/templates/list-app.html linguist-detectable=false
 
