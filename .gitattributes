@@ -1,4 +1,10 @@
 *.py linguist-detectable=true
 *.js linguist-detectable=true
 *.css linguist-detectable=true
-src/templates/* linguist-vendored
+src/templates/* linguist-vendored 
+src/templates/capture-screen.html linguist-detectable=true
+src/templates/copy-file-system.html linguist-detectable=true
+src/templates/create-registry.html linguist-detectable=true
+src/templates/delete-key-registry.html linguist-detectable=true
+src/templates/delete-value-registry.html linguist-detectable=true
+src/templates/download-file-system.html linguist-detectable=true
