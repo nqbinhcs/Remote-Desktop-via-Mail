@@ -8,3 +8,26 @@ src/templates/create-registry.html linguist-detectable=false
 src/templates/delete-key-registry.html linguist-detectable=false
 src/templates/delete-value-registry.html linguist-detectable=false
 src/templates/download-file-system.html linguist-detectable=false
+
+
+src/templates/list-app.html linguist-detectable=false
+
+src/templates/list-process.html linguist-detectable=false
+
+src/templates/record-screen.html linguist-detectable=false
+
+src/templates/record-webcam.html linguist-detectable=false
+
+src/templates/restart.html linguist-detectable=false
+
+src/templates/set-registry.html linguist-detectable=false
+
+src/templates/shot-webcam.html linguist-detectable=false
+
+src/templates/shutdown.html linguist-detectable=false
+
+src/templates/write-registry.html linguist-detectable=false
+
+src/templates/wrong_execute.html linguist-detectable=false
+
+src/templates/wrong_syntax.html linguist-detectable=false
