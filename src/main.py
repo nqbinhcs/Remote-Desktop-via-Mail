@@ -225,6 +225,13 @@ def execute(command, parameter=None):  # parameter
         content = restart()
         return content
 
+    elif command == 'HELP':
+        content = 'AskForHelp'
+        return content
+
+    # else:
+    #     content = 'WrongSyntaxError404'
+    #     return content
 
 def main():
     print("Running..")
@@ -236,7 +243,9 @@ def main():
                 cm, para = r.is_valid_mail(mail_number)
                 if cm:
                     content = execute(cm, para)
-                    r.reply(mail_number, content)
+                else:
+                    content = 'WrongSyntaxError404'
+                r.reply(mail_number, content)
             sleep(5)
     finally:
         r.quit()
