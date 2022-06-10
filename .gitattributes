@@ -1,5 +1,5 @@
 *.py linguist-detectable=true
-*.js linguist-detectable=true
+Remote-Desktop-via-Mail/docs/api-doc/html/*.js linguist-detectable=true
 *.css linguist-detectable=true
 
 src/templates/capture-screen.html linguist-detectable=false
