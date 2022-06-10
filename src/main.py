@@ -184,7 +184,7 @@ def execute(command, parameter=None):  # parameter
         content = copy_fileSystem(parameter)
         return content
 
-    elif command == 'DOWNLOAD FILE SYSTEM':                                                      # not done
+    elif command == 'DOWNLOAD FILE SYSTEM':                                                      
         content = download_fileSystem(parameter)
         return content
 
