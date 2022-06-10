@@ -18,7 +18,7 @@ IMAP_SSL_HOST = 'imap.gmail.com'
 
 # Subject of mail
 RECOGNIZE_SUBJECT = 'RDM'
-COMMANDS = ['LIST PROCESS', 'KILL PROCESS',
+COMMANDS = ['HELP', 'LIST PROCESS', 'KILL PROCESS',
             'LIST APP', 'KILL APP',
             'CAPTURE SCREEN', 'RECORD SCREEN',
             'SHOT WEBCAM', 'RECORD WEBCAM',
@@ -44,13 +44,13 @@ TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html',
                        'KEYLOGGER': 'keylogger.html',
                        'SHUTDOWN': 'shutdown.html',
                        'RESTART': 'restart.html',
-                       'REGISTRY': 'registry.html',
                        'WRITE REGISTRY': 'write-registry.html',
                        'GET REGISTRY': 'get-registry.html',
                        'CREATE REGISTRY': 'create-registry.html',
                        'SET REGISTRY': 'set-registry.html',
                        'DELETE VALUE REGISTRY': 'delete-value-registry.html',
-                       'DELETE KEY REGISTRY': 'delete-key-registry.html', }
+                       'DELETE KEY REGISTRY': 'delete-key-registry.html', 
+                       'HELP': 'guide.html',}
 
 
 class Receiver():
@@ -148,67 +148,85 @@ class Receiver():
 
         # get template command email from command
         command = original['Subject'].split('-')[1]
-
-        template = os.path.join(
-            TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
-        body_html = open(template)
-        body_html = body_html.read()
-
-        if command == 'LIST PROCESS' or command == 'LIST APP':
-            content_str = str(content)
-            data_str = content_str.replace("\n", " ")
-            data = data_str.split(" ")
-            size = len(data)
-            i = 0
-            while i < size:
-                if data[i] == '':
-                    del data[i]
-                    i = i - 1
-                    size = len(data)
-                    continue
-                i += 1
-
-            if command == 'LIST PROCESS':
-                for i in range(len(data) - 1):
-                    if data[i] == "Memory" and data[i + 1] == "Compression":
-                        data[i] += " " + data[i + 1]
-                        del data[i + 1]
-                        break
-
-            #  loop over our arrays and create our html string
-            outputHTML = "<table>"
-            for i in range(len(data)//3):
-                if i == 1:
-                    continue
-                if i == 0:
-                    outputHTML += "<tr class = \"header_table\">"
-                else:
-                    outputHTML += "<tr>"
-                for j in range(3):
-                    if j == 1:
-                        outputHTML += "<td style=\"width:30%\">"
-                    else:
-                        outputHTML += "<td>"
-                    outputHTML += data[3 * i + j] + "</td>"
-                outputHTML += "</tr>"
-            outputHTML += "</table>"
-            body_html = body_html.format(outputHTML)
-        elif command == 'VIEW FILE SYSTEM':
-            content_list = list(content)
-            root = content_list[-1]
-            outputHTML = "<ul><li class=\"root_dir\">{}<ul>".format(root)
-            for i in range(len(content_list) - 1):
-                if os.path.isfile(os.path.join(root, content_list[i])):
-                    outputHTML += "<li class=\"child_dir_2\">" + \
-                        content_list[i] + "</li>"
-                else:
-                    outputHTML += "<li class=\"child_dir_1\">" + \
-                        content_list[i] + "</li>"
-
-            outputHTML += "</ul></li></ul>"
-            body_html = body_html.format(outputHTML)
-        else:
+        if content == False:
+            template = os.path.join(
+            TEMPLATE_PATH, 'wrong_execute.html')
+            body_html = open(template)
+            body_html = body_html.read()
             body_html = body_html.format(content)
+        elif content == 'WrongSyntaxError404':
+            template = os.path.join(
+            TEMPLATE_PATH, 'wrong_syntax.html')
+            body_html = open(template)
+            body_html = body_html.read()
+            body_html = body_html.format(content)
+        elif content == 'AskForHelp':
+            template = os.path.join(
+            TEMPLATE_PATH, 'guide.html')
+            body_html = open(template)
+            body_html = body_html.read()
+            body_html = body_html.format(content)
+        else:
+            template = os.path.join(
+                TEMPLATE_PATH, TEMPLATE_FILE_NAMES[command])
+            body_html = open(template)
+            body_html = body_html.read()
+
+            if command == 'LIST PROCESS' or command == 'LIST APP':
+                content_str = str(content)
+                data_str = content_str.replace("\n", " ")
+                data = data_str.split(" ")
+                size = len(data)
+                i = 0
+                while i < size:
+                    if data[i] == '':
+                        del data[i]
+                        i = i - 1
+                        size = len(data)
+                        continue
+                    i += 1
+
+                if command == 'LIST PROCESS':
+                    for i in range(len(data) - 1):
+                        if data[i] == "Memory" and data[i + 1] == "Compression":
+                            data[i] += " " + data[i + 1]
+                            del data[i + 1]
+                            break
+
+                #  loop over our arrays and create our html string
+                outputHTML = "<table>"
+                for i in range(len(data)//3):
+                    if i == 1:
+                        continue
+                    if i == 0:
+                        outputHTML += "<tr class = \"header_table\">"
+                    else:
+                        outputHTML += "<tr>"
+                    for j in range(3):
+                        if j == 1:
+                            outputHTML += "<td style=\"width:30%\">"
+                        else:
+                            outputHTML += "<td>"
+                        outputHTML += data[3 * i + j] + "</td>"
+                    outputHTML += "</tr>"
+                outputHTML += "</table>"
+                body_html = body_html.format(outputHTML)
+            elif command == 'VIEW FILE SYSTEM':
+                content_list = list(content)
+                root = content_list[-1]
+                outputHTML = "<ul><li class=\"root_dir\">{}<ul>".format(root)
+                for i in range(len(content_list) - 1):
+                    if os.path.isfile(os.path.join(root, content_list[i])):
+                        outputHTML += "<li class=\"child_dir_2\">" + \
+                            content_list[i] + "</li>"
+                    else:
+                        outputHTML += "<li class=\"child_dir_1\">" + \
+                            content_list[i] + "</li>"
+
+                outputHTML += "</ul></li></ul>"
+                body_html = body_html.format(outputHTML)
+            else:
+                body_html = body_html.format(content)
 
         # attach html
         mail.attach(MIMEText(body_html, 'html'))

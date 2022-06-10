@@ -6,9 +6,8 @@ Tải về [release.zip](https://drive.google.com/file/d/1Crw8Gh7zaJeEsxnaA42qE5
 
 ## Phân công
 
-Làm theo workflow của report -> trình bày từng section -> demo sử dụng ở cuối (< 20')
+Làm theo workflow của report -> trình bày từng section -> demo sử dụng ở cuối (< 20') <br>
 Phân công:
-
 - Phần nội dung sourcecode (Bình)
 - Phần cài đặt + demo bao gồm: config cho chương trình, cài đặt, gỡ cài đặt và giới thiệu các tính năng (Hiếu + Tín)
   - Config chương trình + tính năng liên quan PROCESS, APP, SCREEN, WEBCAM ()

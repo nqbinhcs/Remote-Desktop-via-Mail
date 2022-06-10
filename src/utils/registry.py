@@ -82,7 +82,7 @@ class Registry:
         """
         try:
             path = path.replace('/', '\\')
-            key = winreg.OpenKey(reg, path, 0, access=winreg.KEY_ALL_ACCESS)
+            key = winreg.OpenKey(reg, path, 0, access=winreg.KEY_READ | winreg.KEY_WOW64_64KEY)
             result = winreg.QueryValueEx(key, name)
 
             if not result[0]:
