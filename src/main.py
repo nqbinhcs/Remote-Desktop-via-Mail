@@ -184,7 +184,7 @@ def execute(command, parameter=None):  # parameter
         content = copy_fileSystem(parameter)
         return content
 
-    elif command == 'DOWNLOAD FILE SYSTEM':                                                      
+    elif command == 'DOWNLOAD FILE SYSTEM':
         content = download_fileSystem(parameter)
         return content
 
@@ -233,6 +233,7 @@ def execute(command, parameter=None):  # parameter
     #     content = 'WrongSyntaxError404'
     #     return content
 
+
 def main():
     print("Running..")
     r = Receiver()
@@ -246,7 +247,7 @@ def main():
                 else:
                     content = 'WrongSyntaxError404'
                 r.reply(mail_number, content)
-            sleep(5)
+            # sleep(5)
     finally:
         r.quit()
 
