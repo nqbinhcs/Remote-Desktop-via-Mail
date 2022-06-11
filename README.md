@@ -14,16 +14,13 @@
 
 ## 1. About us
 We will introduce briefly about our project:
-<ul>
-  <li>This is our final project for Computer Networking course.</li>
-  <li>Our application provides users with several features that allow them to connect with a remote desktop just by sending email.</li>
-  <li>Check out our API documentation here docs/api-doc/</li>
-  <p align="center">
-  <img src="images/documentation.png" alt="API-doc" style="border-radius:80%"/>
-   </p>
-</p>
 
-</ul>
++ This is our final project for Computer Networking course.
++ Our application provides users with several features that allow them to connect with a remote desktop just by sending email.
++ Check out our API documentation here [docs/api-doc/](docs/api-doc/).
+  
+<img src="images/documentation.png">
+
 
 ### Contributors:
 
