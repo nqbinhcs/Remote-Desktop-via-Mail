@@ -1,4 +1,7 @@
 # Remote-Desktop-via-Mail
+<p align="center">
+  <img src="images/SMTP-IMAP.jpg" alt="Remote Control" style="border-radius:50%"/>
+</p>
 
 **Content:**
 <ul style="list-style-type: none">
