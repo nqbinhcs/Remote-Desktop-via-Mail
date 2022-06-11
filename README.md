@@ -16,8 +16,13 @@
 We will introduce briefly about our project:
 <ul>
   <li>This is our final project for Computer Networking course.</li>
-  <li>Our program will ... </li>
-  <li></li>
+  <li>Our application provides users with several features that allow them to connect with a remote desktop just by sending email.</li>
+  <li>Check out our API documentation here docs/api-doc/</li>
+  <p align="center">
+  <img src="images/SMTP-IMAP.png" alt="Remote Control" style="border-radius:50%"/>
+   </p>
+</p>
+
 </ul>
 
 ### Contributors:
