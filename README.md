@@ -12,8 +12,8 @@ cd Remote-Desktop-via-Mail
 pip install -r requirements.txt
 ```
 ## Screenshot
-1-2 features (not all)
-Screen shot of sending mail
-Screen shot of replied mails
+1-2 features (not all) <br>
+Screen shot of sending mail <br>
+Screen shot of replied mails <br>
 
 
