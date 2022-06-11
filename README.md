@@ -1,6 +1,6 @@
 # Remote-Desktop-via-Mail
 
-<span  style="font-size: 18px; font-weight: bold;">Content:</span>
+**Content:**
 <ul style="list-style-type: none">
     <li><a href="#about">About us</a></li>
     <li><a href="#install">Installation</a></li>
@@ -38,8 +38,9 @@ pip install -r requirements.txt
 <h5 id="demo"></h5>
 
 ## 3. Demo
-There are 
-We choose 3 features to demo our project: <a href="#shotwebcam"> Shot webcam </a> and <a href="#listapp"> List applications </a> running on remote desktop and <a href="#killapp">Turn off a particular app</a> using its ID.<br>
+There are 21 commands and we choose 3 commands to demo 3 features in our project: <a href="#shotwebcam"> Shot webcam </a> and <a href="#listapp"> List applications </a> running on remote desktop and <a href="#killapp">Turn off a particular app</a> using its ID.
+
+If you want to learn more about the remaining commands, please read the [document.](docs/Instruction.pdf)
 
 <h5 id="shotwebcam"></h5>
 
