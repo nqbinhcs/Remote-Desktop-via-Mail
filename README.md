@@ -28,7 +28,7 @@ We will introduce briefly about our project:
 |----------------|-------------------------------|----------------------------
 |    20120412    |Nguyen Quang Binh | [@nqbinh47](https://github.com/nqbinh47)            
 |    20120476    |Nguyen Trong Hieu | [@NguyenHiu](https://github.com/NguyenHiu)           
-|    20120596    |Nguyen Bao Tin | [@nguyenbaotin](https://github.com/nguyenbaotin)
+|    20120596    |Nguyen Bao Tin | [@nbtin](https://github.com/nbtin)
 
 <h5 id="install"></h5>
 
